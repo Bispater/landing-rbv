@@ -1,0 +1,63 @@
+[
+  {
+    "nombre": "Directiva",
+    "descripcion": "Órgano ejecutivo de la agrupación, encargado de la gestión administrativa y representación oficial.",
+    "icono": "fa-crown",
+    "color": "#8B0000",
+    "miembros": [
+      { "nombre": "María González", "rol": "Presidenta", "cargo": "Representante Legal", "comision": "Directiva" },
+      { "nombre": "Carlos Vásquez", "rol": "Vicepresidente", "cargo": "", "comision": "Directiva" },
+      { "nombre": "Ana Martínez", "rol": "Secretaria", "cargo": "", "comision": "Directiva" },
+      { "nombre": "Jorge Herrera", "rol": "Tesorero", "cargo": "", "comision": "Directiva" }
+    ]
+  },
+  {
+    "nombre": "Comisión Artística",
+    "descripcion": "Responsable de la dirección artística, coreografías, ensayos y la calidad de las presentaciones.",
+    "icono": "fa-music",
+    "color": "#D4AF37",
+    "miembros": [
+      { "nombre": "Luisa Cárdenas", "rol": "Directora Artística", "cargo": "Coreógrafa Principal", "comision": "Artística" },
+      { "nombre": "Pablo Riquelme", "rol": "Director Musical", "cargo": "", "comision": "Artística" },
+      { "nombre": "Valentina Torres", "rol": "Instructora de Danza", "cargo": "", "comision": "Artística" },
+      { "nombre": "Rodrigo Castillo", "rol": "Músico", "cargo": "Zampoña", "comision": "Artística" },
+      { "nombre": "Sofía Morales", "rol": "Músico", "cargo": "Quena", "comision": "Artística" },
+      { "nombre": "Diego Fuentes", "rol": "Músico", "cargo": "Bombo", "comision": "Artística" }
+    ]
+  },
+  {
+    "nombre": "Comisión de Vestuario",
+    "descripcion": "Encargada del diseño, confección, mantención y administración del vestuario y utilería de la agrupación.",
+    "icono": "fa-tshirt",
+    "color": "#5C3317",
+    "miembros": [
+      { "nombre": "Rosa Espinoza", "rol": "Coordinadora", "cargo": "Diseñadora de Vestuario", "comision": "Vestuario" },
+      { "nombre": "Camila Díaz", "rol": "Modista", "cargo": "", "comision": "Vestuario" },
+      { "nombre": "Isabel Reyes", "rol": "Modista", "cargo": "", "comision": "Vestuario" },
+      { "nombre": "Fernando López", "rol": "Utilero", "cargo": "", "comision": "Vestuario" }
+    ]
+  },
+  {
+    "nombre": "Comisión de Difusión",
+    "descripcion": "Gestión de redes sociales, comunicaciones, diseño gráfico y relaciones públicas de la agrupación.",
+    "icono": "fa-bullhorn",
+    "color": "#1E3A5F",
+    "miembros": [
+      { "nombre": "Ignacio Vargas", "rol": "Coordinador", "cargo": "Community Manager", "comision": "Difusión" },
+      { "nombre": "Catalina Pinto", "rol": "Diseñadora", "cargo": "Diseño Gráfico", "comision": "Difusión" },
+      { "nombre": "Nicolás Soto", "rol": "Fotógrafo", "cargo": "", "comision": "Difusión" },
+      { "nombre": "Javiera Muñoz", "rol": "Redactora", "cargo": "", "comision": "Difusión" }
+    ]
+  },
+  {
+    "nombre": "Comisión de Finanzas",
+    "descripcion": "Administración de los recursos económicos, recaudación de fondos y control financiero de la agrupación.",
+    "icono": "fa-coins",
+    "color": "#2D6A4F",
+    "miembros": [
+      { "nombre": "Jorge Herrera", "rol": "Coordinador", "cargo": "Tesorero", "comision": "Finanzas" },
+      { "nombre": "Patricia Núñez", "rol": "Fiscalizadora", "cargo": "", "comision": "Finanzas" },
+      { "nombre": "Roberto Araya", "rol": "Asistente", "cargo": "", "comision": "Finanzas" }
+    ]
+  }
+]

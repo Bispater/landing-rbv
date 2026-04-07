@@ -1,0 +1,50 @@
+<nav class="navbar" [class.scrolled]="scrolled()">
+  <div class="container nav-inner">
+    <a class="navbar-brand" routerLink="/" (click)="closeMenu()">
+      <span class="brand-icon"><img src="assets/images/logopng.png" alt="RBV"></span>
+      <div class="brand-text">
+        <span class="brand-name">Reales Brillantes</span>
+        <span class="brand-sub">Valparaíso</span>
+      </div>
+    </a>
+
+    <button class="burger" (click)="toggleMenu()" [class.open]="menuOpen()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+
+    <ul class="nav-links" [class.open]="menuOpen()">
+      @for (item of navItems; track item.label) {
+        @if (!item.children) {
+          <li>
+            <a [routerLink]="item.route" routerLinkActive="active"
+               [routerLinkActiveOptions]="{exact: item.route === '/'}"
+               (click)="closeMenu()">
+              {{ item.label }}
+            </a>
+          </li>
+        } @else {
+          <li class="has-dropdown" [class.dropdown-open]="activeDropdown() === item.label">
+            <button class="dropdown-trigger" (click)="toggleDropdown(item.label)">
+              {{ item.label }}
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <ul class="dropdown-menu">
+              @for (child of item.children; track child.route) {
+                <li>
+                  <a [routerLink]="child.route" routerLinkActive="active" (click)="closeMenu()">
+                    {{ child.label }}
+                  </a>
+                </li>
+              }
+            </ul>
+          </li>
+        }
+      }
+      <li class="nav-admin">
+        <a routerLink="/admin" class="admin-btn" (click)="closeMenu()">
+          <i class="fas fa-lock"></i> Admin
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>

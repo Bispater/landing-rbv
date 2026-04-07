@@ -1,0 +1,60 @@
+<div class="page-header">
+  <div class="container">
+    <h1><i class="fas fa-images"></i> Galería de Fotos</h1>
+    <p>Momentos y recuerdos de nuestra agrupación</p>
+    <div class="gold-line"></div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="category-tabs">
+      @for (cat of categorias(); track cat) {
+        <button class="cat-tab" [class.active]="filtroActivo() === cat" (click)="setFiltro(cat)">
+          {{ cat | titlecase }}
+        </button>
+      }
+    </div>
+
+    <div class="gallery-grid">
+      @for (foto of fotosFiltradas; track foto.url) {
+        <div class="gallery-item card" (click)="abrirFoto(foto)">
+          <div class="gallery-img" [style.background-image]="'url(' + foto.url + ')'">
+            <div class="gallery-overlay">
+              <i class="fas fa-expand-alt"></i>
+            </div>
+            <span class="gallery-cat">{{ foto.categoria }}</span>
+          </div>
+          <div class="gallery-info">
+            <h4>{{ foto.titulo }}</h4>
+            @if (foto.fecha) {
+              <span class="gallery-date"><i class="fas fa-calendar-alt"></i> {{ foto.fecha }}</span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (fotosFiltradas.length === 0) {
+      <div class="empty-state">
+        <i class="fas fa-images"></i>
+        <p>No hay fotos en esta categoría</p>
+      </div>
+    }
+  </div>
+</section>
+
+@if (fotoAmpliada()) {
+  <div class="lightbox" (click)="cerrarFoto()">
+    <div class="lightbox-content" (click)="$event.stopPropagation()">
+      <button class="lightbox-close" (click)="cerrarFoto()"><i class="fas fa-times"></i></button>
+      <img [src]="fotoAmpliada()!.url" [alt]="fotoAmpliada()!.titulo" />
+      <div class="lightbox-caption">
+        <h3>{{ fotoAmpliada()!.titulo }}</h3>
+        @if (fotoAmpliada()!.descripcion) {
+          <p>{{ fotoAmpliada()!.descripcion }}</p>
+        }
+      </div>
+    </div>
+  </div>
+}

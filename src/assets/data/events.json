@@ -1,0 +1,61 @@
+[
+  {
+    "titulo": "Festival Andino de Valparaíso 2025",
+    "descripcion": "Gran festival de música y danza andina en el anfiteatro de Valparaíso. Participarán agrupaciones de toda la región.",
+    "fecha": "2025-08-15",
+    "hora": "18:00",
+    "lugar": "Anfiteatro Municipal de Valparaíso",
+    "imagen": "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=600&q=80",
+    "tipo": "presentacion"
+  },
+  {
+    "titulo": "Presentación Fiestas Patrias",
+    "descripcion": "Celebración de Fiestas Patrias con danzas andinas y música tradicional. Entrada liberada para toda la familia.",
+    "fecha": "2025-09-18",
+    "hora": "15:00",
+    "lugar": "Plaza de Armas de Valparaíso",
+    "imagen": "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600&q=80",
+    "tipo": "presentacion"
+  },
+  {
+    "titulo": "Ensayo General Agosto",
+    "descripcion": "Ensayo general de preparación para el festival. Asistencia obligatoria para todos los integrantes.",
+    "fecha": "2025-08-10",
+    "hora": "10:00",
+    "lugar": "Sede Social Los Cerros, Valparaíso",
+    "tipo": "ensayo"
+  },
+  {
+    "titulo": "Encuentro de Folclore Andino Regional",
+    "descripcion": "Encuentro interregional de agrupaciones andinas. Participaremos representando a Valparaíso.",
+    "fecha": "2025-10-04",
+    "hora": "11:00",
+    "lugar": "Teatro Municipal de Viña del Mar",
+    "imagen": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&q=80",
+    "tipo": "evento"
+  },
+  {
+    "titulo": "Presentación Corporativa Navidad",
+    "descripcion": "Presentación especial de navidad en centro comercial de la ciudad.",
+    "fecha": "2025-12-20",
+    "hora": "17:00",
+    "lugar": "Mall Barón, Valparaíso",
+    "tipo": "presentacion"
+  },
+  {
+    "titulo": "Taller Abierto de Danza Andina",
+    "descripcion": "Taller gratuito abierto a la comunidad para aprender los pasos básicos de danza andina.",
+    "fecha": "2025-07-26",
+    "hora": "10:30",
+    "lugar": "Parque Italia, Valparaíso",
+    "tipo": "evento"
+  },
+  {
+    "titulo": "Ensayo Extraordinario Trajes",
+    "descripcion": "Ensayo especial con vestuario completo para ajustes de coreografía.",
+    "fecha": "2025-08-02",
+    "hora": "09:00",
+    "lugar": "Sede Social Los Cerros, Valparaíso",
+    "tipo": "ensayo"
+  }
+]

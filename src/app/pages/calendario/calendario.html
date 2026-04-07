@@ -1,0 +1,75 @@
+<div class="page-header">
+  <div class="container">
+    <h1><i class="fas fa-calendar-alt"></i> Calendario de Eventos</h1>
+    <p>Mantente al día con todas nuestras actividades y presentaciones</p>
+    <div class="gold-line"></div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="cal-layout">
+      <aside class="cal-sidebar">
+        <h3>Filtrar por tipo</h3>
+        <div class="filter-btns">
+          @for (tipo of tiposEvento; track tipo) {
+            <button class="filter-btn" [class.active]="filtro() === tipo"
+                    (click)="setFiltro(tipo)">
+              <i class="fas" [class.fa-calendar-check]="tipo === 'evento'"
+                 [class.fa-star]="tipo === 'presentacion'"
+                 [class.fa-drum]="tipo === 'ensayo'"
+                 [class.fa-th-list]="tipo === 'todos'"></i>
+              {{ getTipoLabel(tipo) === tipo ? 'Todos' : getTipoLabel(tipo) }}
+            </button>
+          }
+        </div>
+
+        <div class="cal-legend">
+          <h4>Leyenda</h4>
+          <div class="legend-item evento"><span></span> Evento</div>
+          <div class="legend-item presentacion"><span></span> Presentación</div>
+          <div class="legend-item ensayo"><span></span> Ensayo</div>
+        </div>
+      </aside>
+
+      <div class="cal-main">
+        <div class="cal-nav">
+          <button (click)="prevMes()" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+          <h2 class="mes-title">{{ getNombreMes() | titlecase }}</h2>
+          <button (click)="nextMes()" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+
+        @if (eventosFiltrados.length === 0) {
+          <div class="empty-state">
+            <i class="fas fa-calendar-times"></i>
+            <p>No hay eventos para este filtro</p>
+          </div>
+        }
+
+        <div class="events-list">
+          @for (evento of eventosFiltrados; track evento.titulo) {
+            <div class="event-item" [class]="'event-item--' + evento.tipo">
+              <div class="event-item-date">
+                <span class="day">{{ evento.fecha | slice:8:10 }}</span>
+                <span class="month">{{ getMes(evento.fecha) }}</span>
+              </div>
+              <div class="event-item-content">
+                <div class="event-item-top">
+                  <span class="tipo-badge">{{ getTipoLabel(evento.tipo) }}</span>
+                  @if (evento.hora) {
+                    <span class="hora"><i class="fas fa-clock"></i> {{ evento.hora }}</span>
+                  }
+                </div>
+                <h3>{{ evento.titulo }}</h3>
+                <p>{{ evento.descripcion }}</p>
+                @if (evento.lugar) {
+                  <div class="lugar"><i class="fas fa-map-marker-alt"></i> {{ evento.lugar }}</div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

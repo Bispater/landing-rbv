@@ -1,0 +1,143 @@
+<section class="hero">
+  <div class="hero-video-wrap">
+    <div id="yt-hero-player"></div>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="container hero-content">
+    <div class="hero-badge"><img src="assets/images/logopng.png" alt="RBV" class="badge-logo"> Agrupación Andina</div>
+    <h1>Reales Brillantes<br /><span class="hero-city">Valparaíso</span></h1>
+    <p class="hero-desc">
+      Preservando y difundiendo la música y danza andina en el corazón de la Quinta Región.
+      Únete a nuestra comunidad de folclore y tradición.
+    </p>
+    <div class="hero-actions">
+      <a routerLink="/presentaciones" class="btn-gold">
+        <i class="fas fa-calendar-star"></i> Próximas Presentaciones
+      </a>
+      <a routerLink="/galeria" class="btn-outline-white">
+        <i class="fas fa-images"></i> Ver Galería
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-num">15+</span>
+        <span class="stat-lbl">Años de historia</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-num">50+</span>
+        <span class="stat-lbl">Integrantes</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-num">100+</span>
+        <span class="stat-lbl">Presentaciones</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll"><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<section class="section section-about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text">
+        <span class="label-tag">Quiénes somos</span>
+        <h2>Una familia unida por<br /> la música andina</h2>
+        <p>Somos una agrupación de folclore andino nacida en Valparaíso, comprometida con la preservación y difusión de la cultura andina a través de la música, la danza y las tradiciones ancestrales.</p>
+        <p>Nuestro nombre, <strong>Reales Brillantes</strong>, refleja el brillo y la nobleza de las tradiciones que llevamos en el corazón.</p>
+        <div class="about-actions">
+          <a routerLink="/comisiones" class="btn-primary"><i class="fas fa-users"></i> Conocer el equipo</a>
+          <a routerLink="/estatutos" class="btn-outline">Nuestros Estatutos</a>
+        </div>
+      </div>
+      <div class="about-cards">
+        <div class="about-card red">
+          <i class="fas fa-music"></i>
+          <h4>Música Andina</h4>
+          <p>Zampoñas, quenas, bombos y más instrumentos ancestrales</p>
+        </div>
+        <div class="about-card gold">
+          <i class="fas fa-hat-cowboy"></i>
+          <h4>Danza y Vestuario</h4>
+          <p>Trajes típicos y coreografías de las culturas andinas</p>
+        </div>
+        <div class="about-card dark">
+          <i class="fas fa-calendar-check"></i>
+          <h4>Eventos</h4>
+          <p>Participación en festivales, carnavales y celebraciones</p>
+        </div>
+        <div class="about-card bordeaux">
+          <i class="fas fa-graduation-cap"></i>
+          <h4>Formación</h4>
+          <p>Talleres y tutoriales para aprender nuestros pasos</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-events">
+  <div class="container">
+    <h2 class="section-title">Próximos Eventos</h2>
+    <p class="section-subtitle">Mantente al día con nuestras actividades</p>
+    <div class="events-grid">
+      @for (evento of proximosEventos; track evento.titulo) {
+        <div class="event-card card">
+          <div class="event-img" [style.background-image]="evento.imagen ? 'url(' + evento.imagen + ')' : 'none'">
+            <span class="event-type">{{ evento.tipo }}</span>
+          </div>
+          <div class="event-info">
+            <div class="event-date">
+              <i class="fas fa-calendar"></i> {{ evento.fecha }}
+              @if (evento.hora) { <span>· {{ evento.hora }}</span> }
+            </div>
+            <h3>{{ evento.titulo }}</h3>
+            <p>{{ evento.descripcion }}</p>
+            @if (evento.lugar) {
+              <div class="event-place"><i class="fas fa-map-marker-alt"></i> {{ evento.lugar }}</div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+    <div class="text-center" style="margin-top: 2.5rem">
+      <a routerLink="/calendario" class="btn-primary"><i class="fas fa-calendar-alt"></i> Ver Calendario Completo</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section-music">
+  <div class="container">
+    <div class="music-banner">
+      <div class="music-text">
+        <h2>Escucha Nuestra Música</h2>
+        <p>Explora la playlist con las canciones que usamos para bailar y practicar</p>
+        <a routerLink="/playlist" class="btn-gold"><i class="fas fa-headphones"></i> Ir a la Playlist</a>
+      </div>
+      <div class="music-icons">
+        <i class="fas fa-music note-1"></i>
+        <i class="fas fa-drum note-2"></i>
+        <i class="fas fa-music note-3"></i>
+        <i class="fas fa-guitar note-4"></i>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-tutorials">
+  <div class="container">
+    <h2 class="section-title">Aprende a Bailar</h2>
+    <p class="section-subtitle">Tutoriales para conocer nuestros pasos</p>
+    <div class="tutorials-cta">
+      <div class="tutorials-img">
+        <i class="fab fa-youtube"></i>
+      </div>
+      <div class="tutorials-content">
+        <h3>Tutoriales en YouTube</h3>
+        <p>Encuentra videos tutoriales con los pasos básicos y avanzados de nuestras danzas andinas. Aprende a tu ritmo desde cualquier lugar.</p>
+        <a routerLink="/tutoriales" class="btn-primary"><i class="fas fa-play-circle"></i> Ver Tutoriales</a>
+      </div>
+    </div>
+  </div>
+</section>

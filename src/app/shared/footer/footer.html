@@ -1,0 +1,50 @@
+<footer class="footer">
+  <div class="footer-wave">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none"><path fill="#1A1A1A" d="M0,0 C360,60 1080,60 1440,0 L1440,60 L0,60 Z"/></svg>
+  </div>
+  <div class="footer-body">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-logo">
+            <img src="assets/images/logopng.png" alt="RBV">
+          </div>
+          <h3>Reales Brillantes</h3>
+          <p class="brand-city">Valparaíso</p>
+          <p class="brand-desc">Agrupación Andina que preserva y difunde la cultura andina en la región de Valparaíso, Chile.</p>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <h4>Navegación</h4>
+          <ul>
+            @for (link of links; track link.route) {
+              <li><a [routerLink]="link.route">{{ link.label }}</a></li>
+            }
+          </ul>
+        </div>
+
+        <div class="footer-info">
+          <h4>Información</h4>
+          <ul class="info-list">
+            <li><i class="fas fa-map-marker-alt"></i> Valparaíso, Chile</li>
+            <li><i class="fas fa-envelope"></i> contacto&#64;realesbrillantes.cl</li>
+            <li><i class="fas fa-music"></i> Folclore Andino</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© {{ year }} Reales Brillantes Valparaíso. Todos los derechos reservados.</p>
+        <a routerLink="/admin" class="admin-link">
+          <i class="fas fa-lock"></i> Panel Administrativo
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>

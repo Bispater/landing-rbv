@@ -1,0 +1,41 @@
+<div class="page-header">
+  <div class="container">
+    <h1><i class="fas fa-scroll"></i> Estatutos</h1>
+    <p>Reglamento interno y bases constitutivas de la agrupación</p>
+    <div class="gold-line"></div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="doc-layout">
+      <aside class="doc-nav">
+        <h4>Índice</h4>
+        <ul>
+          @for (sec of secciones; track sec.titulo; let i = $index) {
+            <li><a [href]="'#art-' + i">{{ sec.titulo | slice:0:30 }}...</a></li>
+          }
+        </ul>
+      </aside>
+      <div class="doc-content">
+        <div class="doc-header">
+          <div class="doc-seal"><img src="assets/images/logopng.png" alt="RBV Logo"></div>
+          <div>
+            <h2>Estatutos de la Agrupación</h2>
+            <p class="doc-org">Reales Brillantes Valparaíso</p>
+            <p class="doc-meta">Folclore Andino · Valparaíso, Chile</p>
+          </div>
+        </div>
+        @for (sec of secciones; track sec.titulo; let i = $index) {
+          <div class="doc-article" [id]="'art-' + i">
+            <div class="art-num">Art. {{ i + 1 }}</div>
+            <div class="art-body">
+              <h3>{{ sec.titulo }}</h3>
+              <p>{{ sec.contenido }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

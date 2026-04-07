@@ -1,0 +1,138 @@
+.comisiones-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: 1rem;
+
+  .com-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-light);
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+
+    i { font-size: 0.85rem; }
+
+    &:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    &.active {
+      background: var(--color-primary);
+      color: #fff;
+      border-color: var(--color-primary);
+    }
+  }
+}
+
+.comision-panel {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+}
+
+.comision-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--color-border);
+
+  .comision-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  h2 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    color: var(--color-primary-dark);
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: var(--color-text-light);
+    font-size: 0.93rem;
+    line-height: 1.6;
+  }
+}
+
+.miembros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.25rem;
+}
+
+.miembro-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem;
+  text-align: center;
+
+  .miembro-foto {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    border: 3px solid var(--color-gold);
+
+    i {
+      font-size: 2rem;
+      color: rgba(255,255,255,0.7);
+    }
+  }
+
+  .miembro-info {
+    h4 {
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      color: var(--color-primary-dark);
+      margin-bottom: 0.35rem;
+    }
+
+    .miembro-rol {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--color-primary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .miembro-cargo {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+      margin-top: 0.2rem;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .comision-header { flex-direction: column; }
+  .comisiones-tabs { gap: 0.35rem; }
+  .miembros-grid { grid-template-columns: 1fr 1fr; }
+}

@@ -1,0 +1,80 @@
+<div class="page-header">
+  <div class="container">
+    <h1><i class="fas fa-headphones"></i> Playlist Musical</h1>
+    <p>Las canciones que usamos para bailar y practicar</p>
+    <div class="gold-line"></div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="playlist-layout">
+      <div class="playlist-player">
+        @if (activa() && safeUrl()) {
+          <div class="player-embed">
+            <iframe [src]="safeUrl()!" frameborder="0" allowfullscreen
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+            </iframe>
+          </div>
+        }
+        @if (activa() && !safeUrl()) {
+          <div class="player-no-video">
+            <i class="fas fa-music"></i>
+            <p>{{ activa()!.titulo }}</p>
+            <span>{{ activa()!.artista }}</span>
+          </div>
+        }
+        @if (!activa()) {
+          <div class="player-placeholder">
+            <i class="fas fa-play-circle"></i>
+            <p>Selecciona una canción para reproducir</p>
+          </div>
+        }
+
+        @if (activa()) {
+          <div class="now-playing">
+            <div class="np-info">
+              <span class="np-label">Reproduciendo</span>
+              <h3>{{ activa()!.titulo }}</h3>
+              <p>{{ activa()!.artista }} · <span class="genre">{{ activa()!.genero }}</span></p>
+              @if (activa()!.descripcion) {
+                <p class="np-desc">{{ activa()!.descripcion }}</p>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="playlist-list">
+        <div class="playlist-header">
+          <h3><i class="fas fa-list-music"></i> Lista de Canciones</h3>
+          <span class="track-count">{{ canciones().length }} canciones</span>
+        </div>
+        <div class="track-list">
+          @for (cancion of canciones(); track cancion.titulo; let i = $index) {
+            <div class="track-item" [class.active]="activa()?.titulo === cancion.titulo"
+                 (click)="reproducir(cancion)">
+              <div class="track-num">
+                @if (activa()?.titulo === cancion.titulo) {
+                  <i class="fas fa-volume-up playing-icon"></i>
+                } @else {
+                  <span>{{ i + 1 }}</span>
+                }
+              </div>
+              <div class="track-info">
+                <span class="track-title">{{ cancion.titulo }}</span>
+                <span class="track-artist">{{ cancion.artista }}</span>
+              </div>
+              <div class="track-right">
+                <span class="track-genre">{{ cancion.genero }}</span>
+                @if (cancion.duracion) {
+                  <span class="track-dur">{{ cancion.duracion }}</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

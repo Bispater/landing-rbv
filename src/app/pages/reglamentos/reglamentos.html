@@ -1,0 +1,29 @@
+<div class="page-header">
+  <div class="container">
+    <h1><i class="fas fa-gavel"></i> Reglamentos</h1>
+    <p>Normas internas de funcionamiento de la agrupación</p>
+    <div class="gold-line"></div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="regl-grid">
+      @for (reg of reglamentos; track reg.titulo) {
+        <div class="regl-card card">
+          <div class="regl-icon">
+            <i class="fas" [class]="'fas ' + reg.icono"></i>
+          </div>
+          <div class="regl-body">
+            <h3>{{ reg.titulo }}</h3>
+            <ul>
+              @for (item of reg.items; track item) {
+                <li><i class="fas fa-check-circle"></i> {{ item }}</li>
+              }
+            </ul>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,56 @@
+<div class="page-header">
+  <div class="container">
+    <h1><i class="fas fa-users"></i> Comisiones</h1>
+    <p>Conoce a los integrantes que hacen posible nuestra agrupación</p>
+    <div class="gold-line"></div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    @if (comisiones().length > 0) {
+      <div class="comisiones-tabs">
+        @for (com of comisiones(); track com.nombre; let i = $index) {
+          <button class="com-tab" [class.active]="activa() === i" (click)="setActiva(i)"
+                  [style.--accent]="com.color">
+            <i class="fas" [class]="'fas ' + com.icono"></i>
+            {{ com.nombre }}
+          </button>
+        }
+      </div>
+
+      <div class="comision-panel">
+        <div class="comision-header">
+          <div class="comision-icon" [style.background]="comisiones()[activa()].color">
+            <i class="fas" [class]="'fas ' + comisiones()[activa()].icono"></i>
+          </div>
+          <div>
+            <h2>{{ comisiones()[activa()].nombre }}</h2>
+            <p>{{ comisiones()[activa()].descripcion }}</p>
+          </div>
+        </div>
+
+        <div class="miembros-grid">
+          @for (miembro of comisiones()[activa()].miembros; track miembro.nombre) {
+            <div class="miembro-card card">
+              <div class="miembro-foto" [style.background-image]="miembro.foto ? 'url(' + miembro.foto + ')' : 'none'">
+                @if (!miembro.foto) {
+                  <i class="fas fa-user"></i>
+                }
+              </div>
+              <div class="miembro-info">
+                <h4>{{ miembro.nombre }}</h4>
+                <span class="miembro-rol">{{ miembro.rol }}</span>
+                @if (miembro.cargo) {
+                  <span class="miembro-cargo">{{ miembro.cargo }}</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <div class="spinner"><div class="spin"></div></div>
+    }
+  </div>
+</section>

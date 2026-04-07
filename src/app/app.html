@@ -1,0 +1,9 @@
+@if (!isAdminRoute()) {
+  <app-navbar></app-navbar>
+}
+<div class="page-wrapper" [class.no-navbar]="isAdminRoute()">
+  <router-outlet></router-outlet>
+</div>
+@if (!isAdminRoute()) {
+  <app-footer></app-footer>
+}

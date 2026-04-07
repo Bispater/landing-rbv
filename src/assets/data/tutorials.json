@@ -1,0 +1,66 @@
+[
+  {
+    "titulo": "Pasos Básicos de Tinkus",
+    "descripcion": "Aprende los pasos fundamentales del Tinkus, una de las danzas más representativas de la cultura andina.",
+    "youtubeId": "QqOK8iLSfy8",
+    "nivel": "principiante",
+    "duracion": "12:30",
+    "instructor": "Luisa Cárdenas"
+  },
+  {
+    "titulo": "Introducción a la Morenada",
+    "descripcion": "Tutorial para principiantes sobre los pasos básicos de la Morenada, danza característica del altiplano.",
+    "youtubeId": "R3hFVvO0NKA",
+    "nivel": "principiante",
+    "duracion": "15:45",
+    "instructor": "Valentina Torres"
+  },
+  {
+    "titulo": "Coreografía de Caporales - Nivel Básico",
+    "descripcion": "Aprende la coreografía básica de los Caporales, con énfasis en el ritmo y los movimientos de brazos.",
+    "youtubeId": "ktvTqknDobU",
+    "nivel": "principiante",
+    "duracion": "18:20",
+    "instructor": "Luisa Cárdenas"
+  },
+  {
+    "titulo": "Técnica Avanzada de Tinkus",
+    "descripcion": "Para bailarines con experiencia. Aprende las figuras avanzadas y la interacción entre parejas en el Tinkus.",
+    "youtubeId": "3tmd-ClpJxA",
+    "nivel": "avanzado",
+    "duracion": "22:10",
+    "instructor": "Luisa Cárdenas"
+  },
+  {
+    "titulo": "Caporales Intermedio - Combinaciones",
+    "descripcion": "Combinaciones de pasos y figuras para bailarines con base en Caporales.",
+    "youtubeId": "cegFxbBpZGE",
+    "nivel": "intermedio",
+    "duracion": "20:05",
+    "instructor": "Valentina Torres"
+  },
+  {
+    "titulo": "Saya Afroboliviana - Fundamentos",
+    "descripcion": "Conoce la historia y aprende los pasos básicos de la Saya Afroboliviana.",
+    "youtubeId": "NLkDFtcJBH0",
+    "nivel": "principiante",
+    "duracion": "14:50",
+    "instructor": "Luisa Cárdenas"
+  },
+  {
+    "titulo": "Coreografía Completa Morenada",
+    "descripcion": "Montaje completo de una coreografía de Morenada. Requiere conocimiento previo de los pasos básicos.",
+    "youtubeId": "9bZkp7q19f0",
+    "nivel": "avanzado",
+    "duracion": "35:00",
+    "instructor": "Valentina Torres"
+  },
+  {
+    "titulo": "Tinkus Intermedio - Figuras en Grupo",
+    "descripcion": "Figuras grupales y formaciones para Tinkus. Ideal para quienes ya dominan los pasos básicos.",
+    "youtubeId": "QqOK8iLSfy8",
+    "nivel": "intermedio",
+    "duracion": "25:15",
+    "instructor": "Luisa Cárdenas"
+  }
+]

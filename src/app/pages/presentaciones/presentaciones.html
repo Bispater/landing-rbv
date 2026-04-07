@@ -1,0 +1,51 @@
+<div class="page-header">
+  <div class="container">
+    <h1><img src="assets/images/logopng.png" alt="RBV" class="page-header-logo"> Próximas Presentaciones</h1>
+    <p>Dónde y cuándo podrás vernos actuar</p>
+    <div class="gold-line"></div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    @if (presentaciones().length === 0) {
+      <div class="no-pres">
+        <i class="fas fa-calendar-times"></i>
+        <h3>Pronto habrá nuevas presentaciones</h3>
+        <p>Mantente atento a nuestras redes sociales y calendario de eventos</p>
+      </div>
+    }
+
+    <div class="pres-list">
+      @for (p of presentaciones(); track p.titulo; let i = $index) {
+        <div class="pres-card" [class.featured]="i === 0">
+          @if (i === 0) {
+            <div class="pres-featured-label"><img src="assets/images/logopng.png" alt="" class="featured-logo"> Próxima presentación</div>
+          }
+          <div class="pres-left">
+            <div class="pres-date">
+              <span class="pres-day">{{ p.fecha | slice:8:10 }}</span>
+              <span class="pres-month">{{ getMes(p.fecha) }}</span>
+              <span class="pres-year">{{ p.fecha | slice:0:4 }}</span>
+            </div>
+          </div>
+          <div class="pres-content">
+            <h3>{{ p.titulo }}</h3>
+            <p>{{ p.descripcion }}</p>
+            <div class="pres-meta">
+              @if (p.hora) {
+                <span><i class="fas fa-clock"></i> {{ p.hora }}</span>
+              }
+              @if (p.lugar) {
+                <span><i class="fas fa-map-marker-alt"></i> {{ p.lugar }}</span>
+              }
+            </div>
+          </div>
+          @if (p.imagen) {
+            <div class="pres-img" [style.background-image]="'url(' + p.imagen + ')'"></div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</section>

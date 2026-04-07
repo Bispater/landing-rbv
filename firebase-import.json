@@ -1,0 +1,323 @@
+{
+  "eventos": {
+    "ev001": {
+      "titulo": "Festival Andino de Valparaíso 2025",
+      "descripcion": "Gran festival de música y danza andina en el anfiteatro de Valparaíso. Participarán agrupaciones de toda la región.",
+      "fecha": "2025-08-15",
+      "hora": "18:00",
+      "lugar": "Anfiteatro Municipal de Valparaíso",
+      "imagen": "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=600&q=80",
+      "tipo": "presentacion"
+    },
+    "ev002": {
+      "titulo": "Presentación Fiestas Patrias",
+      "descripcion": "Celebración de Fiestas Patrias con danzas andinas y música tradicional. Entrada liberada para toda la familia.",
+      "fecha": "2025-09-18",
+      "hora": "15:00",
+      "lugar": "Plaza de Armas de Valparaíso",
+      "imagen": "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600&q=80",
+      "tipo": "presentacion"
+    },
+    "ev003": {
+      "titulo": "Ensayo General Agosto",
+      "descripcion": "Ensayo general de preparación para el festival. Asistencia obligatoria para todos los integrantes.",
+      "fecha": "2025-08-10",
+      "hora": "10:00",
+      "lugar": "Sede Social Los Cerros, Valparaíso",
+      "tipo": "ensayo"
+    },
+    "ev004": {
+      "titulo": "Encuentro de Folclore Andino Regional",
+      "descripcion": "Encuentro interregional de agrupaciones andinas. Participaremos representando a Valparaíso.",
+      "fecha": "2025-10-04",
+      "hora": "11:00",
+      "lugar": "Teatro Municipal de Viña del Mar",
+      "imagen": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&q=80",
+      "tipo": "evento"
+    },
+    "ev005": {
+      "titulo": "Presentación Corporativa Navidad",
+      "descripcion": "Presentación especial de navidad en centro comercial de la ciudad.",
+      "fecha": "2025-12-20",
+      "hora": "17:00",
+      "lugar": "Mall Barón, Valparaíso",
+      "tipo": "presentacion"
+    },
+    "ev006": {
+      "titulo": "Taller Abierto de Danza Andina",
+      "descripcion": "Taller gratuito abierto a la comunidad para aprender los pasos básicos de danza andina.",
+      "fecha": "2025-07-26",
+      "hora": "10:30",
+      "lugar": "Parque Italia, Valparaíso",
+      "tipo": "evento"
+    },
+    "ev007": {
+      "titulo": "Ensayo Extraordinario Trajes",
+      "descripcion": "Ensayo especial con vestuario completo para ajustes de coreografía.",
+      "fecha": "2025-08-02",
+      "hora": "09:00",
+      "lugar": "Sede Social Los Cerros, Valparaíso",
+      "tipo": "ensayo"
+    }
+  },
+  "tutoriales": {
+    "tut001": {
+      "titulo": "Pasos Básicos de Tinkus",
+      "descripcion": "Aprende los pasos fundamentales del Tinkus, una de las danzas más representativas de la cultura andina.",
+      "youtubeId": "QqOK8iLSfy8",
+      "nivel": "principiante",
+      "duracion": "12:30",
+      "instructor": "Luisa Cárdenas"
+    },
+    "tut002": {
+      "titulo": "Introducción a la Morenada",
+      "descripcion": "Tutorial para principiantes sobre los pasos básicos de la Morenada, danza característica del altiplano.",
+      "youtubeId": "R3hFVvO0NKA",
+      "nivel": "principiante",
+      "duracion": "15:45",
+      "instructor": "Valentina Torres"
+    },
+    "tut003": {
+      "titulo": "Coreografía de Caporales - Nivel Básico",
+      "descripcion": "Aprende la coreografía básica de los Caporales, con énfasis en el ritmo y los movimientos de brazos.",
+      "youtubeId": "ktvTqknDobU",
+      "nivel": "principiante",
+      "duracion": "18:20",
+      "instructor": "Luisa Cárdenas"
+    },
+    "tut004": {
+      "titulo": "Técnica Avanzada de Tinkus",
+      "descripcion": "Para bailarines con experiencia. Aprende las figuras avanzadas y la interacción entre parejas en el Tinkus.",
+      "youtubeId": "3tmd-ClpJxA",
+      "nivel": "avanzado",
+      "duracion": "22:10",
+      "instructor": "Luisa Cárdenas"
+    },
+    "tut005": {
+      "titulo": "Caporales Intermedio - Combinaciones",
+      "descripcion": "Combinaciones de pasos y figuras para bailarines con base en Caporales.",
+      "youtubeId": "cegFxbBpZGE",
+      "nivel": "intermedio",
+      "duracion": "20:05",
+      "instructor": "Valentina Torres"
+    },
+    "tut006": {
+      "titulo": "Saya Afroboliviana - Fundamentos",
+      "descripcion": "Conoce la historia y aprende los pasos básicos de la Saya Afroboliviana.",
+      "youtubeId": "NLkDFtcJBH0",
+      "nivel": "principiante",
+      "duracion": "14:50",
+      "instructor": "Luisa Cárdenas"
+    },
+    "tut007": {
+      "titulo": "Coreografía Completa Morenada",
+      "descripcion": "Montaje completo de una coreografía de Morenada. Requiere conocimiento previo de los pasos básicos.",
+      "youtubeId": "9bZkp7q19f0",
+      "nivel": "avanzado",
+      "duracion": "35:00",
+      "instructor": "Valentina Torres"
+    },
+    "tut008": {
+      "titulo": "Tinkus Intermedio - Figuras en Grupo",
+      "descripcion": "Figuras grupales y formaciones para Tinkus. Ideal para quienes ya dominan los pasos básicos.",
+      "youtubeId": "QqOK8iLSfy8",
+      "nivel": "intermedio",
+      "duracion": "25:15",
+      "instructor": "Luisa Cárdenas"
+    }
+  },
+  "playlist": {
+    "pl001": {
+      "titulo": "Llorando se fue",
+      "artista": "Los Kjarkas",
+      "genero": "Huayno",
+      "youtubeId": "R3hFVvO0NKA",
+      "duracion": "4:05",
+      "descripcion": "Clásico boliviano de Los Kjarkas, base de la Lambada"
+    },
+    "pl002": {
+      "titulo": "Imillitay",
+      "artista": "Los Kjarkas",
+      "genero": "Huayno",
+      "youtubeId": "cegFxbBpZGE",
+      "duracion": "3:48",
+      "descripcion": "Canción tradicional andina"
+    },
+    "pl003": {
+      "titulo": "El Condor Pasa",
+      "artista": "Tradicional Andina",
+      "genero": "Yaraví",
+      "youtubeId": "NLkDFtcJBH0",
+      "duracion": "3:20",
+      "descripcion": "Melodía tradicional andina del siglo XIX"
+    },
+    "pl004": {
+      "titulo": "Fiesta de San Juan",
+      "artista": "Proyección",
+      "genero": "Cueca Andina",
+      "youtubeId": "9bZkp7q19f0",
+      "duracion": "3:55",
+      "descripcion": "Ritmo festivo de celebración"
+    },
+    "pl005": {
+      "titulo": "Tinkus",
+      "artista": "Boliviamanta",
+      "genero": "Tinkus",
+      "youtubeId": "QqOK8iLSfy8",
+      "duracion": "4:12",
+      "descripcion": "Danza ritual andina de encuentro"
+    },
+    "pl006": {
+      "titulo": "Morenada Central",
+      "artista": "Banda Tradición",
+      "genero": "Morenada",
+      "youtubeId": "dQw4w9WgXcQ",
+      "duracion": "5:30",
+      "descripcion": "Danza característica del altiplano"
+    },
+    "pl007": {
+      "titulo": "Caporales",
+      "artista": "Banda Andina",
+      "genero": "Caporales",
+      "youtubeId": "ktvTqknDobU",
+      "duracion": "4:45",
+      "descripcion": "Danza energética de los Yungas bolivianos"
+    },
+    "pl008": {
+      "titulo": "Saya Afroboliviana",
+      "artista": "Movimiento Cultural",
+      "genero": "Saya",
+      "youtubeId": "3tmd-ClpJxA",
+      "duracion": "3:30",
+      "descripcion": "Expresión cultural afroboliviana"
+    }
+  },
+  "fotos": {
+    "foto001": {
+      "url": "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=600&q=80",
+      "titulo": "Festival Andino 2024",
+      "descripcion": "Gran presentación en el festival regional de folclore andino",
+      "fecha": "2024-08-15",
+      "categoria": "presentaciones"
+    },
+    "foto002": {
+      "url": "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600&q=80",
+      "titulo": "Fiestas Patrias 2024",
+      "descripcion": "Celebración dieciochera en la Plaza de Armas",
+      "fecha": "2024-09-18",
+      "categoria": "presentaciones"
+    },
+    "foto003": {
+      "url": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&q=80",
+      "titulo": "Ensayo General",
+      "descripcion": "Preparando la coreografía para el festival",
+      "fecha": "2024-07-20",
+      "categoria": "ensayos"
+    },
+    "foto004": {
+      "url": "https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=600&q=80",
+      "titulo": "Vestuario Andino",
+      "descripcion": "Detalle de nuestros trajes típicos",
+      "fecha": "2024-06-10",
+      "categoria": "vestuario"
+    },
+    "foto005": {
+      "url": "https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=600&q=80",
+      "titulo": "Carnaval de Valparaíso",
+      "descripcion": "Participación en el carnaval cultural de Valparaíso",
+      "fecha": "2024-05-05",
+      "categoria": "presentaciones"
+    },
+    "foto006": {
+      "url": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=80",
+      "titulo": "Taller de Música Andina",
+      "descripcion": "Aprendiendo zampoña y quena",
+      "fecha": "2024-04-12",
+      "categoria": "ensayos"
+    },
+    "foto007": {
+      "url": "https://images.unsplash.com/photo-1560472355-536de3962603?w=600&q=80",
+      "titulo": "Encuentro Regional",
+      "descripcion": "Encuentro con otras agrupaciones de la región",
+      "fecha": "2024-03-22",
+      "categoria": "eventos"
+    },
+    "foto008": {
+      "url": "https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=600&q=80",
+      "titulo": "Aniversario RBV",
+      "descripcion": "Celebración del aniversario de la agrupación",
+      "fecha": "2024-02-14",
+      "categoria": "eventos"
+    },
+    "foto009": {
+      "url": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&q=80",
+      "titulo": "Tocata Navideña",
+      "descripcion": "Presentación navideña para la comunidad",
+      "fecha": "2023-12-18",
+      "categoria": "presentaciones"
+    }
+  },
+  "comisiones": {
+    "com001": {
+      "nombre": "Directiva",
+      "descripcion": "Órgano ejecutivo de la agrupación, encargado de la gestión administrativa y representación oficial.",
+      "icono": "fa-crown",
+      "color": "#8B0000",
+      "miembros": {
+        "m001": { "nombre": "María González", "rol": "Presidenta", "cargo": "Representante Legal", "comision": "Directiva" },
+        "m002": { "nombre": "Carlos Vásquez", "rol": "Vicepresidente", "cargo": "", "comision": "Directiva" },
+        "m003": { "nombre": "Ana Martínez", "rol": "Secretaria", "cargo": "", "comision": "Directiva" },
+        "m004": { "nombre": "Jorge Herrera", "rol": "Tesorero", "cargo": "", "comision": "Directiva" }
+      }
+    },
+    "com002": {
+      "nombre": "Comisión Artística",
+      "descripcion": "Responsable de la dirección artística, coreografías, ensayos y la calidad de las presentaciones.",
+      "icono": "fa-music",
+      "color": "#D4AF37",
+      "miembros": {
+        "m001": { "nombre": "Luisa Cárdenas", "rol": "Directora Artística", "cargo": "Coreógrafa Principal", "comision": "Artística" },
+        "m002": { "nombre": "Pablo Riquelme", "rol": "Director Musical", "cargo": "", "comision": "Artística" },
+        "m003": { "nombre": "Valentina Torres", "rol": "Instructora de Danza", "cargo": "", "comision": "Artística" },
+        "m004": { "nombre": "Rodrigo Castillo", "rol": "Músico", "cargo": "Zampoña", "comision": "Artística" },
+        "m005": { "nombre": "Sofía Morales", "rol": "Músico", "cargo": "Quena", "comision": "Artística" },
+        "m006": { "nombre": "Diego Fuentes", "rol": "Músico", "cargo": "Bombo", "comision": "Artística" }
+      }
+    },
+    "com003": {
+      "nombre": "Comisión de Vestuario",
+      "descripcion": "Encargada del diseño, confección, mantención y administración del vestuario y utilería de la agrupación.",
+      "icono": "fa-tshirt",
+      "color": "#5C3317",
+      "miembros": {
+        "m001": { "nombre": "Rosa Espinoza", "rol": "Coordinadora", "cargo": "Diseñadora de Vestuario", "comision": "Vestuario" },
+        "m002": { "nombre": "Camila Díaz", "rol": "Modista", "cargo": "", "comision": "Vestuario" },
+        "m003": { "nombre": "Isabel Reyes", "rol": "Modista", "cargo": "", "comision": "Vestuario" },
+        "m004": { "nombre": "Fernando López", "rol": "Utilero", "cargo": "", "comision": "Vestuario" }
+      }
+    },
+    "com004": {
+      "nombre": "Comisión de Difusión",
+      "descripcion": "Gestión de redes sociales, comunicaciones, diseño gráfico y relaciones públicas de la agrupación.",
+      "icono": "fa-bullhorn",
+      "color": "#1E3A5F",
+      "miembros": {
+        "m001": { "nombre": "Ignacio Vargas", "rol": "Coordinador", "cargo": "Community Manager", "comision": "Difusión" },
+        "m002": { "nombre": "Catalina Pinto", "rol": "Diseñadora", "cargo": "Diseño Gráfico", "comision": "Difusión" },
+        "m003": { "nombre": "Nicolás Soto", "rol": "Fotógrafo", "cargo": "", "comision": "Difusión" },
+        "m004": { "nombre": "Javiera Muñoz", "rol": "Redactora", "cargo": "", "comision": "Difusión" }
+      }
+    },
+    "com005": {
+      "nombre": "Comisión de Finanzas",
+      "descripcion": "Administración de los recursos económicos, recaudación de fondos y control financiero de la agrupación.",
+      "icono": "fa-coins",
+      "color": "#2D6A4F",
+      "miembros": {
+        "m001": { "nombre": "Jorge Herrera", "rol": "Coordinador", "cargo": "Tesorero", "comision": "Finanzas" },
+        "m002": { "nombre": "Patricia Núñez", "rol": "Fiscalizadora", "cargo": "", "comision": "Finanzas" },
+        "m003": { "nombre": "Roberto Araya", "rol": "Asistente", "cargo": "", "comision": "Finanzas" }
+      }
+    }
+  }
+}

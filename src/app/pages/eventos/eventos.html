@@ -1,0 +1,42 @@
+<div class="page-header">
+  <div class="container">
+    <h1><i class="fas fa-calendar-check"></i> Eventos</h1>
+    <p>Historial y próximos eventos de la agrupación</p>
+    <div class="gold-line"></div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="eventos-grid">
+      @for (evento of eventos(); track evento.titulo) {
+        <div class="evento-card card">
+          <div class="evento-card-img"
+               [style.background-image]="evento.imagen ? 'url(' + evento.imagen + ')' : 'none'">
+            <span class="evento-badge">Evento</span>
+          </div>
+          <div class="evento-card-body">
+            <div class="evento-meta">
+              <span class="evento-date"><i class="fas fa-calendar"></i> {{ evento.fecha }}</span>
+              @if (evento.hora) {
+                <span class="evento-hora"><i class="fas fa-clock"></i> {{ evento.hora }}</span>
+              }
+            </div>
+            <h3>{{ evento.titulo }}</h3>
+            <p>{{ evento.descripcion }}</p>
+            @if (evento.lugar) {
+              <div class="evento-lugar"><i class="fas fa-map-marker-alt"></i> {{ evento.lugar }}</div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (eventos().length === 0) {
+      <div class="empty-state">
+        <i class="fas fa-calendar-times"></i>
+        <p>No hay eventos disponibles en este momento</p>
+      </div>
+    }
+  </div>
+</section>

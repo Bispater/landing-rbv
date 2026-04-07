@@ -1,0 +1,498 @@
+<div class="dash-layout">
+  <aside class="dash-sidebar">
+    <div class="dash-brand">
+      <div class="dash-logo"><img src="assets/images/logopng.png" alt="RBV"></div>
+      <div>
+        <span class="dash-org">RBV Admin</span>
+        <span class="dash-user">{{ auth.currentUser()?.email }}</span>
+      </div>
+    </div>
+
+    <nav class="dash-nav">
+      <button class="dash-nav-btn" [class.active]="seccionActiva() === 'eventos'"
+              (click)="setSeccion('eventos')">
+        <i class="fas fa-calendar-alt"></i> Eventos
+      </button>
+      <button class="dash-nav-btn" [class.active]="seccionActiva() === 'tutoriales'"
+              (click)="setSeccion('tutoriales')">
+        <i class="fab fa-youtube"></i> Tutoriales
+      </button>
+      <button class="dash-nav-btn" [class.active]="seccionActiva() === 'playlist'"
+              (click)="setSeccion('playlist')">
+        <i class="fas fa-music"></i> Playlist
+      </button>
+      <button class="dash-nav-btn" [class.active]="seccionActiva() === 'fotos'"
+              (click)="setSeccion('fotos')">
+        <i class="fas fa-images"></i> Fotos
+      </button>
+    </nav>
+
+    <div class="dash-footer-btns">
+      <a routerLink="/" class="dash-link"><i class="fas fa-globe"></i> Ver Sitio</a>
+      <button class="dash-logout" (click)="cerrarSesion()">
+        <i class="fas fa-sign-out-alt"></i> Salir
+      </button>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    @if (mensaje()) {
+      <div class="dash-toast"><i class="fas fa-check-circle"></i> {{ mensaje() }}</div>
+    }
+
+    <!-- EVENTOS -->
+    @if (seccionActiva() === 'eventos') {
+      <div class="dash-section">
+        <div class="dash-title-row">
+          <h2 class="dash-title"><i class="fas fa-calendar-alt"></i> Gestión de Eventos</h2>
+          <button class="btn-toggle-form" [class.active]="mostrarFormEvento()" (click)="mostrarFormEvento.set(!mostrarFormEvento())">
+            <i class="fas" [class.fa-plus]="!mostrarFormEvento()" [class.fa-times]="mostrarFormEvento()"></i>
+            {{ mostrarFormEvento() ? 'Cancelar' : 'Nuevo Evento' }}
+          </button>
+        </div>
+
+        @if (mostrarFormEvento()) {
+          <div class="dash-form card">
+            <h3>Nuevo Evento</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Título *</label>
+                <input type="text" [(ngModel)]="nuevoEvento.titulo" placeholder="Nombre del evento" />
+              </div>
+              <div class="form-group">
+                <label>Fecha *</label>
+                <input type="date" [(ngModel)]="nuevoEvento.fecha" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Hora</label>
+                <input type="time" [(ngModel)]="nuevoEvento.hora" />
+              </div>
+              <div class="form-group">
+                <label>Tipo</label>
+                <select [(ngModel)]="nuevoEvento.tipo">
+                  <option value="evento">Evento</option>
+                  <option value="presentacion">Presentación</option>
+                  <option value="ensayo">Ensayo</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Lugar</label>
+              <input type="text" [(ngModel)]="nuevoEvento.lugar" placeholder="Dirección o nombre del lugar" />
+            </div>
+            <div class="form-group">
+              <label>Descripción</label>
+              <textarea [(ngModel)]="nuevoEvento.descripcion" rows="3" placeholder="Descripción del evento"></textarea>
+            </div>
+            <div class="form-group">
+              <label>URL de Imagen</label>
+              <input type="url" [(ngModel)]="nuevoEvento.imagen" placeholder="https://..." />
+            </div>
+            <button class="btn-add" (click)="agregarEvento()" [disabled]="guardando()">
+              <i class="fas fa-plus"></i> Agregar Evento
+            </button>
+          </div>
+        }
+
+        <div class="dash-list">
+          @for (ev of eventos(); track ev.id) {
+            <div class="dash-item" [class.editing]="editandoEvento()?.id === ev.id">
+              @if (editandoEvento()?.id === ev.id) {
+                <div class="dash-edit-form">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Título</label>
+                      <input type="text" [(ngModel)]="editandoEvento()!.titulo" />
+                    </div>
+                    <div class="form-group">
+                      <label>Fecha</label>
+                      <input type="date" [(ngModel)]="editandoEvento()!.fecha" />
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Hora</label>
+                      <input type="time" [(ngModel)]="editandoEvento()!.hora" />
+                    </div>
+                    <div class="form-group">
+                      <label>Tipo</label>
+                      <select [(ngModel)]="editandoEvento()!.tipo">
+                        <option value="evento">Evento</option>
+                        <option value="presentacion">Presentación</option>
+                        <option value="ensayo">Ensayo</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Lugar</label>
+                    <input type="text" [(ngModel)]="editandoEvento()!.lugar" />
+                  </div>
+                  <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea [(ngModel)]="editandoEvento()!.descripcion" rows="2"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label>URL Imagen</label>
+                    <input type="url" [(ngModel)]="editandoEvento()!.imagen" />
+                  </div>
+                  <div class="edit-actions">
+                    <button class="btn-save" (click)="guardarEdicionEvento()" [disabled]="guardando()">
+                      <i class="fas fa-check"></i> Guardar
+                    </button>
+                    <button class="btn-cancel" (click)="editandoEvento.set(null)">
+                      <i class="fas fa-times"></i> Cancelar
+                    </button>
+                  </div>
+                </div>
+              } @else {
+                <div class="dash-item-info">
+                  <span class="dash-item-badge">{{ ev.tipo }}</span>
+                  <strong>{{ ev.titulo }}</strong>
+                  <span>{{ ev.fecha }}{{ ev.hora ? ' · ' + ev.hora : '' }}</span>
+                  @if (ev.lugar) { <span class="item-place"><i class="fas fa-map-marker-alt"></i> {{ ev.lugar }}</span> }
+                </div>
+                <div class="item-btns">
+                  <button class="btn-edit" (click)="editarEvento(ev)"><i class="fas fa-pencil-alt"></i></button>
+                  <button class="btn-del" (click)="eliminarEvento(ev.id!)"><i class="fas fa-trash"></i></button>
+                </div>
+              }
+            </div>
+          }
+          @if (eventos().length === 0) {
+            <p class="dash-empty">No hay eventos. Agrega uno arriba.</p>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- TUTORIALES -->
+    @if (seccionActiva() === 'tutoriales') {
+      <div class="dash-section">
+        <div class="dash-title-row">
+          <h2 class="dash-title"><i class="fab fa-youtube"></i> Gestión de Tutoriales</h2>
+          <button class="btn-toggle-form" [class.active]="mostrarFormTutorial()" (click)="mostrarFormTutorial.set(!mostrarFormTutorial())">
+            <i class="fas" [class.fa-plus]="!mostrarFormTutorial()" [class.fa-times]="mostrarFormTutorial()"></i>
+            {{ mostrarFormTutorial() ? 'Cancelar' : 'Nuevo Tutorial' }}
+          </button>
+        </div>
+
+        @if (mostrarFormTutorial()) {
+          <div class="dash-form card">
+            <h3>Nuevo Tutorial</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Título *</label>
+                <input type="text" [(ngModel)]="nuevoTutorial.titulo" placeholder="Nombre del tutorial" />
+              </div>
+              <div class="form-group">
+                <label>YouTube ID *</label>
+                <input type="text" [(ngModel)]="nuevoTutorial.youtubeId" placeholder="dQw4w9WgXcQ" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nivel</label>
+                <select [(ngModel)]="nuevoTutorial.nivel">
+                  <option value="principiante">Principiante</option>
+                  <option value="intermedio">Intermedio</option>
+                  <option value="avanzado">Avanzado</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Duración</label>
+                <input type="text" [(ngModel)]="nuevoTutorial.duracion" placeholder="10:30" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Instructor</label>
+              <input type="text" [(ngModel)]="nuevoTutorial.instructor" placeholder="Nombre del instructor" />
+            </div>
+            <div class="form-group">
+              <label>Descripción</label>
+              <textarea [(ngModel)]="nuevoTutorial.descripcion" rows="2" placeholder="Descripción breve"></textarea>
+            </div>
+            <button class="btn-add" (click)="agregarTutorial()" [disabled]="guardando()">
+              <i class="fas fa-plus"></i> Agregar Tutorial
+            </button>
+          </div>
+        }
+
+        <div class="dash-list">
+          @for (tut of tutoriales(); track tut.id) {
+            <div class="dash-item" [class.editing]="editandoTutorial()?.id === tut.id">
+              @if (editandoTutorial()?.id === tut.id) {
+                <div class="dash-edit-form">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Título</label>
+                      <input type="text" [(ngModel)]="editandoTutorial()!.titulo" />
+                    </div>
+                    <div class="form-group">
+                      <label>YouTube ID</label>
+                      <input type="text" [(ngModel)]="editandoTutorial()!.youtubeId" />
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Nivel</label>
+                      <select [(ngModel)]="editandoTutorial()!.nivel">
+                        <option value="principiante">Principiante</option>
+                        <option value="intermedio">Intermedio</option>
+                        <option value="avanzado">Avanzado</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label>Duración</label>
+                      <input type="text" [(ngModel)]="editandoTutorial()!.duracion" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Instructor</label>
+                    <input type="text" [(ngModel)]="editandoTutorial()!.instructor" />
+                  </div>
+                  <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea [(ngModel)]="editandoTutorial()!.descripcion" rows="2"></textarea>
+                  </div>
+                  <div class="edit-actions">
+                    <button class="btn-save" (click)="guardarEdicionTutorial()" [disabled]="guardando()">
+                      <i class="fas fa-check"></i> Guardar
+                    </button>
+                    <button class="btn-cancel" (click)="editandoTutorial.set(null)">
+                      <i class="fas fa-times"></i> Cancelar
+                    </button>
+                  </div>
+                </div>
+              } @else {
+                <div class="dash-item-info">
+                  <span class="dash-item-badge tut">{{ tut.nivel }}</span>
+                  <strong>{{ tut.titulo }}</strong>
+                  <span>ID: {{ tut.youtubeId }}</span>
+                </div>
+                <div class="item-btns">
+                  <button class="btn-edit" (click)="editarTutorial(tut)"><i class="fas fa-pencil-alt"></i></button>
+                  <button class="btn-del" (click)="eliminarTutorial(tut.id!)"><i class="fas fa-trash"></i></button>
+                </div>
+              }
+            </div>
+          }
+          @if (tutoriales().length === 0) {
+            <p class="dash-empty">No hay tutoriales. Agrega uno arriba.</p>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- PLAYLIST -->
+    @if (seccionActiva() === 'playlist') {
+      <div class="dash-section">
+        <div class="dash-title-row">
+          <h2 class="dash-title"><i class="fas fa-music"></i> Gestión de Playlist</h2>
+          <button class="btn-toggle-form" [class.active]="mostrarFormCancion()" (click)="mostrarFormCancion.set(!mostrarFormCancion())">
+            <i class="fas" [class.fa-plus]="!mostrarFormCancion()" [class.fa-times]="mostrarFormCancion()"></i>
+            {{ mostrarFormCancion() ? 'Cancelar' : 'Nueva Canción' }}
+          </button>
+        </div>
+
+        @if (mostrarFormCancion()) {
+          <div class="dash-form card">
+            <h3>Nueva Canción</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Título *</label>
+                <input type="text" [(ngModel)]="nuevaCancion.titulo" placeholder="Nombre de la canción" />
+              </div>
+              <div class="form-group">
+                <label>Artista *</label>
+                <input type="text" [(ngModel)]="nuevaCancion.artista" placeholder="Nombre del artista" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Género</label>
+                <input type="text" [(ngModel)]="nuevaCancion.genero" placeholder="Huayno, Cumbia, etc." />
+              </div>
+              <div class="form-group">
+                <label>YouTube ID</label>
+                <input type="text" [(ngModel)]="nuevaCancion.youtubeId" placeholder="dQw4w9WgXcQ" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Duración</label>
+              <input type="text" [(ngModel)]="nuevaCancion.duracion" placeholder="3:45" />
+            </div>
+            <button class="btn-add" (click)="agregarCancion()" [disabled]="guardando()">
+              <i class="fas fa-plus"></i> Agregar Canción
+            </button>
+          </div>
+        }
+
+        <div class="dash-list">
+          @for (c of playlist(); track c.id) {
+            <div class="dash-item" [class.editing]="editandoCancion()?.id === c.id">
+              @if (editandoCancion()?.id === c.id) {
+                <div class="dash-edit-form">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Título</label>
+                      <input type="text" [(ngModel)]="editandoCancion()!.titulo" />
+                    </div>
+                    <div class="form-group">
+                      <label>Artista</label>
+                      <input type="text" [(ngModel)]="editandoCancion()!.artista" />
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Género</label>
+                      <input type="text" [(ngModel)]="editandoCancion()!.genero" />
+                    </div>
+                    <div class="form-group">
+                      <label>YouTube ID</label>
+                      <input type="text" [(ngModel)]="editandoCancion()!.youtubeId" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Duración</label>
+                    <input type="text" [(ngModel)]="editandoCancion()!.duracion" />
+                  </div>
+                  <div class="edit-actions">
+                    <button class="btn-save" (click)="guardarEdicionCancion()" [disabled]="guardando()">
+                      <i class="fas fa-check"></i> Guardar
+                    </button>
+                    <button class="btn-cancel" (click)="editandoCancion.set(null)">
+                      <i class="fas fa-times"></i> Cancelar
+                    </button>
+                  </div>
+                </div>
+              } @else {
+                <div class="dash-item-info">
+                  <span class="dash-item-badge music">{{ c.genero }}</span>
+                  <strong>{{ c.titulo }}</strong>
+                  <span>{{ c.artista }}{{ c.duracion ? ' · ' + c.duracion : '' }}</span>
+                </div>
+                <div class="item-btns">
+                  <button class="btn-edit" (click)="editarCancion(c)"><i class="fas fa-pencil-alt"></i></button>
+                  <button class="btn-del" (click)="eliminarCancion(c.id!)"><i class="fas fa-trash"></i></button>
+                </div>
+              }
+            </div>
+          }
+          @if (playlist().length === 0) {
+            <p class="dash-empty">No hay canciones. Agrega una arriba.</p>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- FOTOS -->
+    @if (seccionActiva() === 'fotos') {
+      <div class="dash-section">
+        <div class="dash-title-row">
+          <h2 class="dash-title"><i class="fas fa-images"></i> Gestión de Fotos</h2>
+          <button class="btn-toggle-form" [class.active]="mostrarFormFoto()" (click)="mostrarFormFoto.set(!mostrarFormFoto()); editandoFoto.set(null)">
+            <i class="fas" [class.fa-plus]="!mostrarFormFoto()" [class.fa-times]="mostrarFormFoto()"></i>
+            {{ mostrarFormFoto() ? 'Cancelar' : 'Nueva Foto' }}
+          </button>
+        </div>
+
+        @if (mostrarFormFoto()) {
+          <div class="dash-form card">
+            <h3>Nueva Foto</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Título *</label>
+                <input type="text" [(ngModel)]="nuevaFoto.titulo" placeholder="Título de la foto" />
+              </div>
+              <div class="form-group">
+                <label>Categoría</label>
+                <input type="text" [(ngModel)]="nuevaFoto.categoria" placeholder="presentaciones, ensayos, etc." />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>URL de la Imagen *</label>
+              <input type="url" [(ngModel)]="nuevaFoto.url" placeholder="https://..." />
+            </div>
+            <div class="form-group">
+              <label>Descripción</label>
+              <input type="text" [(ngModel)]="nuevaFoto.descripcion" placeholder="Descripción breve" />
+            </div>
+            <div class="form-group">
+              <label>Fecha</label>
+              <input type="date" [(ngModel)]="nuevaFoto.fecha" />
+            </div>
+            @if (nuevaFoto.url) {
+              <div class="img-preview">
+                <img [src]="nuevaFoto.url" alt="Vista previa" (error)="nuevaFoto.url = ''" />
+              </div>
+            }
+            <button class="btn-add" (click)="agregarFoto()" [disabled]="guardando()">
+              <i class="fas fa-plus"></i> Agregar Foto
+            </button>
+          </div>
+        }
+
+        @if (editandoFoto()) {
+          <div class="dash-form card foto-edit-panel">
+            <div class="foto-edit-header">
+              <h3><i class="fas fa-pencil-alt"></i> Editando: {{ editandoFoto()!.titulo }}</h3>
+              @if (editandoFoto()!.url) {
+                <img class="foto-edit-preview" [src]="editandoFoto()!.url" [alt]="editandoFoto()!.titulo" />
+              }
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Título</label>
+                <input type="text" [(ngModel)]="editandoFoto()!.titulo" />
+              </div>
+              <div class="form-group">
+                <label>Categoría</label>
+                <input type="text" [(ngModel)]="editandoFoto()!.categoria" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>URL de Imagen</label>
+              <input type="url" [(ngModel)]="editandoFoto()!.url" />
+            </div>
+            <div class="form-group">
+              <label>Descripción</label>
+              <input type="text" [(ngModel)]="editandoFoto()!.descripcion" />
+            </div>
+            <div class="form-group">
+              <label>Fecha</label>
+              <input type="date" [(ngModel)]="editandoFoto()!.fecha" />
+            </div>
+            <div class="edit-actions">
+              <button class="btn-save" (click)="guardarEdicionFoto()" [disabled]="guardando()">
+                <i class="fas fa-check"></i> Guardar cambios
+              </button>
+              <button class="btn-cancel" (click)="editandoFoto.set(null)">
+                <i class="fas fa-times"></i> Cancelar
+              </button>
+            </div>
+          </div>
+        }
+
+        <div class="fotos-grid">
+          @for (foto of fotos(); track foto.id) {
+            <div class="foto-thumb" [class.selected]="editandoFoto()?.id === foto.id">
+              <img [src]="foto.url" [alt]="foto.titulo" />
+              <div class="foto-actions">
+                <span>{{ foto.titulo }}</span>
+                <div class="foto-item-btns">
+                  <button class="btn-edit-sm" (click)="editarFoto(foto); mostrarFormFoto.set(false)" title="Editar"><i class="fas fa-pencil-alt"></i></button>
+                  <button class="btn-del-sm" (click)="eliminarFoto(foto.id!)" title="Eliminar"><i class="fas fa-trash"></i></button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+        @if (fotos().length === 0) {
+          <p class="dash-empty">No hay fotos. Agrega una arriba.</p>
+        }
+      </div>
+    }
+  </main>
+</div>

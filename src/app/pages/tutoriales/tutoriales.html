@@ -1,0 +1,76 @@
+<div class="page-header">
+  <div class="container">
+    <h1><i class="fab fa-youtube"></i> Tutoriales</h1>
+    <p>Aprende los pasos de nuestras danzas andinas paso a paso</p>
+    <div class="gold-line"></div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="nivel-tabs">
+      @for (nivel of niveles; track nivel) {
+        <button class="nivel-tab" [class.active]="filtroNivel() === nivel"
+                (click)="filtroNivel.set(nivel)">
+          {{ nivel | titlecase }}
+        </button>
+      }
+    </div>
+
+    <div class="tut-grid">
+      @for (tut of tutorialesFiltrados; track tut.titulo) {
+        <div class="tut-card card" (click)="verTutorial(tut)">
+          <div class="tut-thumb">
+            <img [src]="'https://img.youtube.com/vi/' + tut.youtubeId + '/mqdefault.jpg'"
+                 [alt]="tut.titulo" loading="lazy" />
+            <div class="tut-play"><i class="fas fa-play"></i></div>
+            <span class="tut-nivel" [style.background]="getNivelColor(tut.nivel)">
+              {{ tut.nivel | titlecase }}
+            </span>
+            @if (tut.duracion) {
+              <span class="tut-dur">{{ tut.duracion }}</span>
+            }
+          </div>
+          <div class="tut-info">
+            <h3>{{ tut.titulo }}</h3>
+            <p>{{ tut.descripcion }}</p>
+            @if (tut.instructor) {
+              <div class="tut-instructor">
+                <i class="fas fa-chalkboard-teacher"></i> {{ tut.instructor }}
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (tutorialesFiltrados.length === 0) {
+      <div class="empty-state">
+        <i class="fab fa-youtube"></i>
+        <p>No hay tutoriales para este nivel aún</p>
+      </div>
+    }
+  </div>
+</section>
+
+@if (activo() && safeUrl()) {
+  <div class="modal-overlay" (click)="cerrar()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ activo()!.titulo }}</h3>
+        <button class="modal-close" (click)="cerrar()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-video">
+        <iframe [src]="safeUrl()!" frameborder="0" allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+        </iframe>
+      </div>
+      <div class="modal-desc">
+        <p>{{ activo()!.descripcion }}</p>
+        <span class="nivel-badge" [style.background]="getNivelColor(activo()!.nivel)">
+          {{ activo()!.nivel | titlecase }}
+        </span>
+      </div>
+    </div>
+  </div>
+}

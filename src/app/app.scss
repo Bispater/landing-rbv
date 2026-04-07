@@ -1,0 +1,11 @@
+.page-wrapper {
+  padding-top: var(--navbar-height);
+  min-height: calc(100vh - var(--navbar-height));
+  display: flex;
+  flex-direction: column;
+
+  &.no-navbar {
+    padding-top: 0;
+    min-height: 100vh;
+  }
+}
