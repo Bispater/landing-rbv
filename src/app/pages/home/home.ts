@@ -39,6 +39,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private videoYoutubeId = DEFAULT_CONTENIDO.hero.video.youtubeId;
   private ytReady = false;
   private ytPlayer: YTPlayer | null = null;
+  private onResize = (): void => this.forceIframeSize();
 
   constructor(private data: DataService, private zone: NgZone) {}
 
@@ -84,6 +85,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         tag.src = 'https://www.youtube.com/iframe_api';
         document.head.appendChild(tag);
       }
+      window.addEventListener('resize', this.onResize);
     });
   }
 
@@ -128,24 +130,35 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  /** Dimensiona el iframe de YouTube para cubrir (cover 16:9) el contenedor real del hero,
+      que en móvil puede ser más alto que 100vh y dejaría franjas si usáramos medidas fijas. */
   private forceIframeSize(): void {
-    const iframe = document.querySelector('.hero-video-wrap iframe') as HTMLIFrameElement | null;
-    if (iframe) {
-      iframe.style.cssText = [
-        'position: absolute',
-        'top: 50%',
-        'left: 50%',
-        'transform: translate(-50%, -50%)',
-        'width: max(177.78vh, 100vw)',
-        'height: max(56.25vw, 100vh)',
-        'min-width: 100%',
-        'border: none',
-        'pointer-events: none',
-      ].join(' !important; ') + ' !important';
+    const wrap = document.querySelector('.hero-video-wrap') as HTMLElement | null;
+    const iframe = wrap?.querySelector('iframe') as HTMLIFrameElement | null;
+    if (!wrap || !iframe) return;
+    const cw = wrap.clientWidth;
+    const ch = wrap.clientHeight;
+    let width = cw;
+    let height = (cw * 9) / 16;
+    if (height < ch) {
+      height = ch;
+      width = (ch * 16) / 9;
     }
+    iframe.style.cssText = [
+      'position: absolute',
+      'top: 50%',
+      'left: 50%',
+      'transform: translate(-50%, -50%)',
+      `width: ${Math.ceil(width)}px`,
+      `height: ${Math.ceil(height)}px`,
+      'max-width: none',
+      'border: none',
+      'pointer-events: none',
+    ].join(' !important; ') + ' !important';
   }
 
   ngOnDestroy(): void {
     if (this.fraseInterval) clearInterval(this.fraseInterval);
+    window.removeEventListener('resize', this.onResize);
   }
 }

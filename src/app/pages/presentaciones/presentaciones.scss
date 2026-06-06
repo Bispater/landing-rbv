@@ -147,4 +147,12 @@
   .pres-card { flex-direction: column; }
   .pres-date { flex-direction: row; gap: 0.5rem; align-items: center; width: fit-content; padding: 0.5rem 1rem; }
   .pres-img { width: 100%; height: 160px; }
+
+  /* En móvil el badge pasa al flujo (arriba del todo) para no chocar con la fecha. */
+  .pres-featured-label {
+    position: static;
+    order: -1;
+    align-self: flex-start;
+    margin-bottom: 0.5rem;
+  }
 }
