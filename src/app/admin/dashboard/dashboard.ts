@@ -189,15 +189,19 @@ export class DashboardComponent implements OnInit {
     const data = this.prepararEvento(this.nuevoEvento);
     if (!data) { this.mostrarMensaje('Agrega un título y al menos una fecha', 'error'); return; }
     this.guardando.set(true);
-    await this.data.addItem('eventos', data);
-    this.nuevoEvento = this.emptyEvento();
-    this.mostrarMensaje('Evento agregado correctamente');
+    try {
+      await this.data.addItem('eventos', data);
+      this.nuevoEvento = this.emptyEvento();
+      this.mostrarMensaje('Evento agregado correctamente');
+    } catch (e) { this.avisarError(e); }
   }
 
   async eliminarEvento(id: string): Promise<void> {
     if (await this.confirmarEliminacion('¿Eliminar este evento? Esta acción no se puede deshacer.')) {
-      await this.data.deleteItem(`eventos/${id}`);
-      this.mostrarMensaje('Evento eliminado');
+      try {
+        await this.data.deleteItem(`eventos/${id}`);
+        this.mostrarMensaje('Evento eliminado');
+      } catch (e) { this.avisarError(e); }
     }
   }
 
@@ -214,9 +218,11 @@ export class DashboardComponent implements OnInit {
     if (!prepared) { this.mostrarMensaje('Agrega un título y al menos una fecha', 'error'); return; }
     this.guardando.set(true);
     const { id, ...data } = prepared as Evento;
-    await this.data.updateItem(`eventos/${id}`, data);
-    this.editandoEvento.set(null);
-    this.mostrarMensaje('Evento actualizado');
+    try {
+      await this.data.updateItem(`eventos/${id}`, data);
+      this.editandoEvento.set(null);
+      this.mostrarMensaje('Evento actualizado');
+    } catch (e) { this.avisarError(e); }
   }
 
   async agregarTutorial(): Promise<void> {
@@ -229,8 +235,10 @@ export class DashboardComponent implements OnInit {
 
   async eliminarTutorial(id: string): Promise<void> {
     if (await this.confirmarEliminacion('¿Eliminar este tutorial?')) {
-      await this.data.deleteItem(`tutoriales/${id}`);
-      this.mostrarMensaje('Tutorial eliminado');
+      try {
+        await this.data.deleteItem(`tutoriales/${id}`);
+        this.mostrarMensaje('Tutorial eliminado');
+      } catch (e) { this.avisarError(e); }
     }
   }
 
@@ -258,8 +266,10 @@ export class DashboardComponent implements OnInit {
 
   async eliminarCancion(id: string): Promise<void> {
     if (await this.confirmarEliminacion('¿Eliminar esta canción?')) {
-      await this.data.deleteItem(`playlist/${id}`);
-      this.mostrarMensaje('Canción eliminada');
+      try {
+        await this.data.deleteItem(`playlist/${id}`);
+        this.mostrarMensaje('Canción eliminada');
+      } catch (e) { this.avisarError(e); }
     }
   }
 
@@ -287,8 +297,10 @@ export class DashboardComponent implements OnInit {
 
   async eliminarFoto(id: string): Promise<void> {
     if (await this.confirmarEliminacion('¿Eliminar esta foto?')) {
-      await this.data.deleteItem(`fotos/${id}`);
-      this.mostrarMensaje('Foto eliminada');
+      try {
+        await this.data.deleteItem(`fotos/${id}`);
+        this.mostrarMensaje('Foto eliminada');
+      } catch (e) { this.avisarError(e); }
     }
   }
 
@@ -322,8 +334,10 @@ export class DashboardComponent implements OnInit {
 
   async eliminarPopup(id: string): Promise<void> {
     if (await this.confirmarEliminacion('¿Eliminar este popup?')) {
-      await this.data.deleteItem(`popups/${id}`);
-      this.mostrarMensaje('Popup eliminado');
+      try {
+        await this.data.deleteItem(`popups/${id}`);
+        this.mostrarMensaje('Popup eliminado');
+      } catch (e) { this.avisarError(e); }
     }
   }
 
@@ -361,12 +375,26 @@ export class DashboardComponent implements OnInit {
     return this.confirm.ask({ titulo: 'Eliminar', mensaje, confirmar: 'Eliminar', peligro: true });
   }
 
+  /** Muestra un mensaje claro ante un error de escritura (sesión vencida / permiso denegado). */
+  private avisarError(e: unknown): void {
+    const m = (e as { message?: string })?.message ?? String(e);
+    if (m.includes('PERMISSION_DENIED') || m.includes('Permission denied')) {
+      this.mostrarMensaje('Tu sesión expiró. Cierra sesión y vuelve a iniciar para guardar.', 'error');
+    } else {
+      this.mostrarMensaje('Ocurrió un error al guardar. Intenta nuevamente.', 'error');
+    }
+  }
+
   /** Alterna la visibilidad de una publicación (mostrar/ocultar) sin eliminarla. */
   async toggleVisible(path: string, item: { id?: string; visible?: boolean }): Promise<void> {
     if (!item.id) return;
     const mostrar = item.visible === false; // si estaba oculto, ahora se muestra
-    await this.data.updateItem(`${path}/${item.id}`, { visible: mostrar });
-    this.snackbar.show(mostrar ? 'Publicación visible en el sitio' : 'Publicación oculta del sitio');
+    try {
+      await this.data.updateItem(`${path}/${item.id}`, { visible: mostrar });
+      this.snackbar.show(mostrar ? 'Publicación visible en el sitio' : 'Publicación oculta del sitio');
+    } catch (e) {
+      this.avisarError(e);
+    }
   }
 
   private emptyEvento(): Partial<Evento> {
