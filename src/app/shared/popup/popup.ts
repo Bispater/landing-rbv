@@ -7,9 +7,9 @@ import { partesAIso } from '../../core/util/fecha';
 const STORAGE_KEY = 'rbv_popups_cerrados';
 
 /**
- * Muestra avisos emergentes (popups) programados en el sitio público.
- * Un popup se muestra si está activo y la fecha de hoy está entre `desde` y `hasta`.
- * Los descartes se recuerdan por sesión para no molestar al usuario.
+ * Muestra UN aviso emergente (popup) programado en el sitio público.
+ * Se evalúa una sola vez por carga de página: si el usuario lo cierra, no vuelve
+ * a aparecer durante la sesión (se recuerda el descarte en sessionStorage).
  */
 @Component({
   selector: 'app-popup',
@@ -20,18 +20,22 @@ const STORAGE_KEY = 'rbv_popups_cerrados';
 })
 export class PopupComponent implements OnInit {
   actual = signal<Popup | null>(null);
-  private pendientes: Popup[] = [];
+  private yaEvaluado = false;
 
   constructor(private data: DataService) {}
 
   ngOnInit(): void {
-    const hoy = this.hoyIso();
-    const cerrados = this.cerrados();
     this.data.listenToList<Popup>('popups', (lista) => {
-      this.pendientes = lista.filter(
+      // Solo decidimos qué mostrar la primera vez que llegan los datos.
+      if (this.yaEvaluado) return;
+      this.yaEvaluado = true;
+
+      const hoy = this.hoyIso();
+      const cerrados = this.cerrados();
+      const candidato = lista.find(
         (p) => p.activo && p.desde <= hoy && hoy <= p.hasta && !cerrados.has(p.id ?? ''),
       );
-      if (!this.actual()) this.mostrarSiguiente();
+      this.actual.set(candidato ?? null);
     });
   }
 
@@ -47,13 +51,6 @@ export class PopupComponent implements OnInit {
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify([...cerrados]));
     }
     this.actual.set(null);
-    this.mostrarSiguiente();
-  }
-
-  private mostrarSiguiente(): void {
-    const cerrados = this.cerrados();
-    const siguiente = this.pendientes.find((p) => !cerrados.has(p.id ?? ''));
-    this.actual.set(siguiente ?? null);
   }
 
   private cerrados(): Set<string> {

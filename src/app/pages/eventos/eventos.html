@@ -13,7 +13,7 @@
         <div class="evento-card card">
           <div class="evento-card-img"
                [style.background-image]="evento.imagen ? 'url(' + evento.imagen + ')' : 'none'">
-            <span class="evento-badge">Evento</span>
+            <span class="evento-badge" [class]="'evento-badge ' + evento.tipo">{{ getTipoLabel(evento.tipo) }}</span>
           </div>
           <div class="evento-card-body">
             <div class="evento-meta">

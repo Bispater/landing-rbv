@@ -5,15 +5,26 @@
   right: 0;
   z-index: 1000;
   height: var(--navbar-height);
-  background: rgba(10, 17, 40, 0.95);
-  backdrop-filter: blur(12px);
   border-bottom: 1px solid transparent;
   transition: var(--transition);
 
+  /* El fondo y el blur van en un pseudo-elemento: si pusiéramos backdrop-filter
+     en .navbar, los hijos con position:fixed (menú móvil) quedarían contenidos
+     dentro del navbar en vez del viewport y el menú no se vería. */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgba(10, 17, 40, 0.95);
+    backdrop-filter: blur(12px);
+    transition: var(--transition);
+  }
+
   &.scrolled {
-    background: rgba(10, 17, 40, 0.98);
     border-bottom-color: var(--color-gold);
     box-shadow: var(--shadow-md);
+    &::before { background: rgba(10, 17, 40, 0.98); }
   }
 }
 

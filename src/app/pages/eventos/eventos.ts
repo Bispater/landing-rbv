@@ -19,9 +19,16 @@ export class EventosComponent implements OnInit {
   ngOnInit(): void {
     this.data.listenToList<Evento>('eventos', (all) => {
       this.eventos.set(
-        all.filter((e) => e.tipo === 'evento' && esVisible(e))
+        all.filter(esVisible)
           .sort((a, b) => (fechaPrincipal(a) > fechaPrincipal(b) ? 1 : -1)),
       );
     });
+  }
+
+  getTipoLabel(tipo: string): string {
+    const labels: Record<string, string> = {
+      evento: 'Evento', presentacion: 'Presentación', ensayo: 'Ensayo',
+    };
+    return labels[tipo] || tipo;
   }
 }

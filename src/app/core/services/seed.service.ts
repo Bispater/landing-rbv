@@ -15,11 +15,11 @@ import {
 /** Popup de ejemplo (rango amplio para que se vea al sembrar). */
 const POPUP_EJEMPLO: Popup[] = [
   {
-    titulo: '¡Súmate a la fraternidad!',
-    mensaje: 'Estamos recibiendo nuevos integrantes. No necesitas experiencia, solo ganas de bailar caporal.',
+    titulo: 'Convocatoria 2025 cerrada',
+    mensaje: 'Por ahora no estamos recibiendo nuevos integrantes. ¡Déjanos tu correo y te avisaremos cuando abramos la próxima convocatoria!',
     imagen: '',
-    enlace: '/presentaciones',
-    textoEnlace: 'Ver presentaciones',
+    enlace: '/contacto',
+    textoEnlace: 'Dejar mi correo',
     desde: '2026-01-01',
     hasta: '2026-12-31',
     activo: true,
