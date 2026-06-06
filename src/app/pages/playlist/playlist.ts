@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Cancion, DataService } from '../../core/services/data.service';
+import { Cancion, DataService, esVisible } from '../../core/services/data.service';
 
 @Component({
   selector: 'app-playlist',
@@ -19,8 +19,9 @@ export class PlaylistComponent implements OnInit {
 
   ngOnInit(): void {
     this.data.listenToList<Cancion>('playlist', (data) => {
-      this.canciones.set(data);
-      if (data.length > 0 && !this.activa()) this.reproducir(data[0]);
+      const visibles = data.filter(esVisible);
+      this.canciones.set(visibles);
+      if (visibles.length > 0 && !this.activa()) this.reproducir(visibles[0]);
     });
   }
 

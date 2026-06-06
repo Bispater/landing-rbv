@@ -1,5 +1,5 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
@@ -12,6 +12,7 @@ import {
   Popup,
   Contenido,
   DEFAULT_CONTENIDO,
+  conContenidoDefaults,
   youtubeThumb,
   ocurrenciasEvento,
 } from '../../core/services/data.service';
@@ -26,7 +27,7 @@ type Section = 'eventos' | 'tutoriales' | 'playlist' | 'fotos' | 'popups' | 'con
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, FechaInputComponent, FechaLargaPipe],
+  imports: [CommonModule, FormsModule, FechaInputComponent, FechaLargaPipe],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -61,6 +62,10 @@ export class DashboardComponent implements OnInit {
   guardando = signal(false);
   sembrando = signal(false);
   subiendoFoto = signal(false);
+  subiendoVideo = signal(false);
+
+  readonly MAX_IMAGEN_MB = 5;
+  readonly MAX_VIDEO_MB = 50;
 
   // Editable site content (hero/about/contact). Starts from defaults until RTDB loads.
   contenido = signal<Contenido>(structuredClone(DEFAULT_CONTENIDO));
@@ -81,7 +86,7 @@ export class DashboardComponent implements OnInit {
     this.data.listenToList<Foto>('fotos', (v) => this.fotos.set(v));
     this.data.listenToList<Popup>('popups', (v) => this.popups.set(v));
     this.data.listenToRef<Contenido>('contenido', (val) => {
-      if (val) this.contenido.set({ ...structuredClone(DEFAULT_CONTENIDO), ...val });
+      this.contenido.set(conContenidoDefaults(val));
     });
   }
 
@@ -111,19 +116,38 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  /** Uploads a chosen file to Cloudinary and writes the resulting URL into the target foto object. */
+  /** Uploads a chosen image to Cloudinary and writes the resulting URL into the target foto object. */
   async subirImagen(event: Event, target: Partial<Foto>): Promise<void> {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
     this.subiendoFoto.set(true);
     try {
-      target.url = await this.data.uploadImage(file);
+      target.url = await this.data.uploadMedia(file, this.MAX_IMAGEN_MB);
       this.mostrarMensaje('Imagen subida correctamente');
     } catch (e) {
       this.mostrarMensaje(e instanceof Error ? e.message : 'Error al subir la imagen', 'error');
     } finally {
       this.subiendoFoto.set(false);
+      input.value = '';
+    }
+  }
+
+  /** Sube un video de fondo del hero a Cloudinary y lo deja seleccionado como 'archivo'. */
+  async subirVideoHero(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.subiendoVideo.set(true);
+    try {
+      const url = await this.data.uploadMedia(file, this.MAX_VIDEO_MB);
+      this.contenido().hero.video.url = url;
+      this.contenido().hero.video.tipo = 'archivo';
+      this.mostrarMensaje('Video subido. Recuerda Guardar cambios.');
+    } catch (e) {
+      this.mostrarMensaje(e instanceof Error ? e.message : 'Error al subir el video', 'error');
+    } finally {
+      this.subiendoVideo.set(false);
       input.value = '';
     }
   }
@@ -337,19 +361,27 @@ export class DashboardComponent implements OnInit {
     return this.confirm.ask({ titulo: 'Eliminar', mensaje, confirmar: 'Eliminar', peligro: true });
   }
 
+  /** Alterna la visibilidad de una publicación (mostrar/ocultar) sin eliminarla. */
+  async toggleVisible(path: string, item: { id?: string; visible?: boolean }): Promise<void> {
+    if (!item.id) return;
+    const mostrar = item.visible === false; // si estaba oculto, ahora se muestra
+    await this.data.updateItem(`${path}/${item.id}`, { visible: mostrar });
+    this.snackbar.show(mostrar ? 'Publicación visible en el sitio' : 'Publicación oculta del sitio');
+  }
+
   private emptyEvento(): Partial<Evento> {
-    return { titulo: '', descripcion: '', fecha: '', fechas: [{ fecha: '', hora: '' }], lugar: '', tipo: 'evento' };
+    return { titulo: '', descripcion: '', fecha: '', fechas: [{ fecha: '', hora: '' }], lugar: '', tipo: 'evento', visible: true };
   }
   private emptyPopup(): Partial<Popup> {
     return { titulo: '', mensaje: '', imagen: '', enlace: '', textoEnlace: '', desde: '', hasta: '', activo: true };
   }
   private emptyTutorial(): Partial<Tutorial> {
-    return { titulo: '', descripcion: '', youtubeId: '', nivel: 'principiante', instructor: '' };
+    return { titulo: '', descripcion: '', youtubeId: '', nivel: 'principiante', instructor: '', visible: true };
   }
   private emptyCancion(): Partial<Cancion> {
-    return { titulo: '', artista: '', genero: '', youtubeId: '', duracion: '' };
+    return { titulo: '', artista: '', genero: '', youtubeId: '', duracion: '', visible: true };
   }
   private emptyFoto(): Partial<Foto> {
-    return { url: '', youtubeId: '', titulo: '', descripcion: '', fecha: '', categoria: 'general' };
+    return { url: '', youtubeId: '', titulo: '', descripcion: '', fecha: '', categoria: 'general', visible: true };
   }
 }

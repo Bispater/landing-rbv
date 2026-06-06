@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DataService, Evento, ocurrenciasEvento, fechaPrincipal } from '../../core/services/data.service';
+import { DataService, Evento, ocurrenciasEvento, fechaPrincipal, esVisible } from '../../core/services/data.service';
 import { FechaLargaPipe } from '../../core/util/fecha.pipe';
 
 @Component({
@@ -19,7 +19,7 @@ export class EventosComponent implements OnInit {
   ngOnInit(): void {
     this.data.listenToList<Evento>('eventos', (all) => {
       this.eventos.set(
-        all.filter((e) => e.tipo === 'evento')
+        all.filter((e) => e.tipo === 'evento' && esVisible(e))
           .sort((a, b) => (fechaPrincipal(a) > fechaPrincipal(b) ? 1 : -1)),
       );
     });

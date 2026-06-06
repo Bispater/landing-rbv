@@ -1,0 +1,74 @@
+<div class="page-header">
+  <div class="container">
+    <h1><i class="fas fa-envelope"></i> Contacto</h1>
+    <p>¿Tienes una invitación, una consulta o quieres sumarte? Escríbenos.</p>
+    <div class="gold-line"></div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="contacto-grid">
+      <!-- Formulario -->
+      <div class="contacto-form card">
+        <h2>Envíanos un mensaje</h2>
+        <p class="form-intro">Otras agrupaciones pueden enviarnos sus invitaciones por aquí.</p>
+
+        <div class="form-group">
+          <label>Nombre o agrupación *</label>
+          <input type="text" [(ngModel)]="form.nombre" placeholder="Tu nombre o el de tu agrupación" />
+        </div>
+        <div class="form-group">
+          <label>Correo *</label>
+          <input type="email" [(ngModel)]="form.email" placeholder="tucorreo@ejemplo.cl" />
+        </div>
+        <div class="form-group">
+          <label>Tipo de mensaje</label>
+          <select [(ngModel)]="form.tipo">
+            @for (t of tipos; track t) { <option [value]="t">{{ t }}</option> }
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Mensaje *</label>
+          <textarea [(ngModel)]="form.mensaje" rows="5" placeholder="Cuéntanos..."></textarea>
+        </div>
+        <button class="btn-primary" (click)="enviar()" [disabled]="enviando()">
+          <i class="fas" [class.fa-paper-plane]="!enviando()" [class.fa-spinner]="enviando()" [class.fa-spin]="enviando()"></i>
+          {{ enviando() ? 'Enviando...' : 'Enviar mensaje' }}
+        </button>
+      </div>
+
+      <!-- Datos + convocatoria -->
+      <aside class="contacto-info">
+        <div class="convocatoria-card" [class.abierta]="contenido.convocatoria.abierta">
+          <span class="conv-badge">
+            <i class="fas" [class.fa-lock]="!contenido.convocatoria.abierta" [class.fa-lock-open]="contenido.convocatoria.abierta"></i>
+            {{ contenido.convocatoria.titulo }} · {{ contenido.convocatoria.estado }}
+          </span>
+          <p>{{ contenido.convocatoria.mensaje }}</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Datos de contacto</h3>
+          @if (contenido.contacto.direccion) {
+            <div class="info-item"><i class="fas fa-map-marker-alt"></i> {{ contenido.contacto.direccion }}</div>
+          }
+          @if (contenido.contacto.email) {
+            <a class="info-item" [href]="'mailto:' + contenido.contacto.email"><i class="fas fa-envelope"></i> {{ contenido.contacto.email }}</a>
+          }
+          <div class="info-socials">
+            @if (contenido.contacto.instagram) {
+              <a [href]="contenido.contacto.instagram" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            }
+            @if (contenido.contacto.youtube) {
+              <a [href]="contenido.contacto.youtube" target="_blank" rel="noopener" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            }
+            @if (contenido.contacto.facebook) {
+              <a [href]="contenido.contacto.facebook" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+            }
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>

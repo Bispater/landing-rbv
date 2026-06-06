@@ -40,7 +40,7 @@
         <i class="fas" [class.fa-database]="!sembrando()" [class.fa-spinner]="sembrando()" [class.fa-spin]="sembrando()"></i>
         {{ sembrando() ? 'Cargando...' : 'Cargar datos de ejemplo' }}
       </button>
-      <a routerLink="/" class="dash-link"><i class="fas fa-globe"></i> Ver Sitio</a>
+      <a href="/" target="_blank" rel="noopener" class="dash-link"><i class="fas fa-globe"></i> Ver Sitio</a>
       <button class="dash-logout" (click)="cerrarSesion()">
         <i class="fas fa-sign-out-alt"></i> Salir
       </button>
@@ -48,6 +48,13 @@
   </aside>
 
   <main class="dash-main">
+    <div class="dash-topbar">
+      <span class="dash-topbar-title"><i class="fas fa-gauge-high"></i> Panel de administración</span>
+      <a href="/" target="_blank" rel="noopener" class="ver-sitio-btn">
+        <i class="fas fa-external-link-alt"></i> Ver sitio
+      </a>
+    </div>
+
     <!-- EVENTOS -->
     @if (seccionActiva() === 'eventos') {
       <div class="dash-section">
@@ -109,7 +116,7 @@
 
         <div class="dash-list">
           @for (ev of eventos(); track ev.id) {
-            <div class="dash-item" [class.editing]="editandoEvento()?.id === ev.id">
+            <div class="dash-item" [class.editing]="editandoEvento()?.id === ev.id" [class.oculto]="ev.visible === false">
               @if (editandoEvento()?.id === ev.id) {
                 <div class="dash-edit-form">
                   <div class="form-group">
@@ -163,6 +170,7 @@
               } @else {
                 <div class="dash-item-info">
                   <span class="dash-item-badge">{{ ev.tipo }}</span>
+                  @if (ev.visible === false) { <span class="oculto-badge"><i class="fas fa-eye-slash"></i> Oculto</span> }
                   <strong>{{ ev.titulo }}</strong>
                   <span>
                     @for (o of ocurrenciasDe(ev); track o.fecha; let last = $last) {
@@ -172,6 +180,9 @@
                   @if (ev.lugar) { <span class="item-place"><i class="fas fa-map-marker-alt"></i> {{ ev.lugar }}</span> }
                 </div>
                 <div class="item-btns">
+                  <button class="btn-edit" (click)="toggleVisible('eventos', ev)" [title]="ev.visible === false ? 'Mostrar' : 'Ocultar'">
+                    <i class="fas" [class.fa-eye]="ev.visible !== false" [class.fa-eye-slash]="ev.visible === false"></i>
+                  </button>
                   <button class="btn-edit" (click)="editarEvento(ev)"><i class="fas fa-pencil-alt"></i></button>
                   <button class="btn-del" (click)="eliminarEvento(ev.id!)"><i class="fas fa-trash"></i></button>
                 </div>
@@ -239,7 +250,7 @@
 
         <div class="dash-list">
           @for (tut of tutoriales(); track tut.id) {
-            <div class="dash-item" [class.editing]="editandoTutorial()?.id === tut.id">
+            <div class="dash-item" [class.editing]="editandoTutorial()?.id === tut.id" [class.oculto]="tut.visible === false">
               @if (editandoTutorial()?.id === tut.id) {
                 <div class="dash-edit-form">
                   <div class="form-row">
@@ -286,10 +297,14 @@
               } @else {
                 <div class="dash-item-info">
                   <span class="dash-item-badge tut">{{ tut.nivel }}</span>
+                  @if (tut.visible === false) { <span class="oculto-badge"><i class="fas fa-eye-slash"></i> Oculto</span> }
                   <strong>{{ tut.titulo }}</strong>
                   <span>ID: {{ tut.youtubeId }}</span>
                 </div>
                 <div class="item-btns">
+                  <button class="btn-edit" (click)="toggleVisible('tutoriales', tut)" [title]="tut.visible === false ? 'Mostrar' : 'Ocultar'">
+                    <i class="fas" [class.fa-eye]="tut.visible !== false" [class.fa-eye-slash]="tut.visible === false"></i>
+                  </button>
                   <button class="btn-edit" (click)="editarTutorial(tut)"><i class="fas fa-pencil-alt"></i></button>
                   <button class="btn-del" (click)="eliminarTutorial(tut.id!)"><i class="fas fa-trash"></i></button>
                 </div>
@@ -349,7 +364,7 @@
 
         <div class="dash-list">
           @for (c of playlist(); track c.id) {
-            <div class="dash-item" [class.editing]="editandoCancion()?.id === c.id">
+            <div class="dash-item" [class.editing]="editandoCancion()?.id === c.id" [class.oculto]="c.visible === false">
               @if (editandoCancion()?.id === c.id) {
                 <div class="dash-edit-form">
                   <div class="form-row">
@@ -388,10 +403,14 @@
               } @else {
                 <div class="dash-item-info">
                   <span class="dash-item-badge music">{{ c.genero }}</span>
+                  @if (c.visible === false) { <span class="oculto-badge"><i class="fas fa-eye-slash"></i> Oculto</span> }
                   <strong>{{ c.titulo }}</strong>
                   <span>{{ c.artista }}{{ c.duracion ? ' · ' + c.duracion : '' }}</span>
                 </div>
                 <div class="item-btns">
+                  <button class="btn-edit" (click)="toggleVisible('playlist', c)" [title]="c.visible === false ? 'Mostrar' : 'Ocultar'">
+                    <i class="fas" [class.fa-eye]="c.visible !== false" [class.fa-eye-slash]="c.visible === false"></i>
+                  </button>
                   <button class="btn-edit" (click)="editarCancion(c)"><i class="fas fa-pencil-alt"></i></button>
                   <button class="btn-del" (click)="eliminarCancion(c.id!)"><i class="fas fa-trash"></i></button>
                 </div>
@@ -513,12 +532,16 @@
 
         <div class="fotos-grid">
           @for (foto of fotos(); track foto.id) {
-            <div class="foto-thumb" [class.selected]="editandoFoto()?.id === foto.id">
+            <div class="foto-thumb" [class.selected]="editandoFoto()?.id === foto.id" [class.oculto]="foto.visible === false">
               @if (foto.youtubeId) { <span class="foto-yt-badge"><i class="fab fa-youtube"></i></span> }
+              @if (foto.visible === false) { <span class="foto-oculto-badge"><i class="fas fa-eye-slash"></i> Oculto</span> }
               <img [src]="fotoThumb(foto)" [alt]="foto.titulo" />
               <div class="foto-actions">
                 <span>{{ foto.titulo }}</span>
                 <div class="foto-item-btns">
+                  <button class="btn-edit-sm" (click)="toggleVisible('fotos', foto)" [title]="foto.visible === false ? 'Mostrar' : 'Ocultar'">
+                    <i class="fas" [class.fa-eye]="foto.visible !== false" [class.fa-eye-slash]="foto.visible === false"></i>
+                  </button>
                   <button class="btn-edit-sm" (click)="editarFoto(foto); mostrarFormFoto.set(false)" title="Editar"><i class="fas fa-pencil-alt"></i></button>
                   <button class="btn-del-sm" (click)="eliminarFoto(foto.id!)" title="Eliminar"><i class="fas fa-trash"></i></button>
                 </div>
@@ -710,6 +733,37 @@
             </div>
           }
           <button class="btn-mini" (click)="addStat()"><i class="fas fa-plus"></i> Agregar estadística</button>
+
+          <label class="sub-label">Video de fondo</label>
+          <div class="video-tipo">
+            <label class="radio-row">
+              <input type="radio" name="vtipo" value="youtube" [(ngModel)]="contenido().hero.video.tipo" />
+              <i class="fab fa-youtube"></i> YouTube
+            </label>
+            <label class="radio-row">
+              <input type="radio" name="vtipo" value="archivo" [(ngModel)]="contenido().hero.video.tipo" />
+              <i class="fas fa-upload"></i> Video propio
+            </label>
+          </div>
+
+          @if (contenido().hero.video.tipo === 'youtube') {
+            <div class="form-group">
+              <label>YouTube ID del video</label>
+              <input type="text" [(ngModel)]="contenido().hero.video.youtubeId" placeholder="ej: fbjNfowfN-A" />
+            </div>
+          } @else {
+            <div class="form-group">
+              <label>Subir video <small>(máx {{ MAX_VIDEO_MB }} MB · mp4/webm)</small></label>
+              <input type="file" accept="video/*" (change)="subirVideoHero($event)" [disabled]="subiendoVideo()" />
+              @if (subiendoVideo()) { <span class="upload-hint"><i class="fas fa-spinner fa-spin"></i> Subiendo video...</span> }
+            </div>
+            @if (contenido().hero.video.url) {
+              <div class="form-group">
+                <label>Vista previa</label>
+                <video class="video-preview" [src]="contenido().hero.video.url" muted autoplay loop playsinline></video>
+              </div>
+            }
+          }
         </div>
 
         <div class="dash-form card">
@@ -732,6 +786,27 @@
             </div>
           }
           <button class="btn-mini" (click)="addParrafo()"><i class="fas fa-plus"></i> Agregar párrafo</button>
+        </div>
+
+        <div class="dash-form card">
+          <h3><i class="fas fa-bullhorn"></i> Convocatoria</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Título</label>
+              <input type="text" [(ngModel)]="contenido().convocatoria.titulo" placeholder="Convocatoria 2025" />
+            </div>
+            <div class="form-group">
+              <label>Estado (texto)</label>
+              <input type="text" [(ngModel)]="contenido().convocatoria.estado" placeholder="Cerrada / Abierta" />
+            </div>
+          </div>
+          <label class="check-row">
+            <input type="checkbox" [(ngModel)]="contenido().convocatoria.abierta" /> Convocatoria abierta (se muestra en verde)
+          </label>
+          <div class="form-group">
+            <label>Mensaje</label>
+            <textarea [(ngModel)]="contenido().convocatoria.mensaje" rows="3" placeholder="Ej: La convocatoria 2025 está cerrada. Te avisaremos cuando abramos la próxima."></textarea>
+          </div>
         </div>
 
         <div class="dash-form card">

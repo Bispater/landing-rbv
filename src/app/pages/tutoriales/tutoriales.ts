@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Tutorial, DataService } from '../../core/services/data.service';
+import { Tutorial, DataService, esVisible } from '../../core/services/data.service';
 
 @Component({
   selector: 'app-tutoriales',
@@ -21,7 +21,7 @@ export class TutorialesComponent implements OnInit {
 
   ngOnInit(): void {
     this.data.listenToList<Tutorial>('tutoriales', (data) => {
-      this.tutoriales.set(data);
+      this.tutoriales.set(data.filter(esVisible));
     });
   }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, NgZone } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { DataService, Evento, Contenido, DEFAULT_CONTENIDO, ocurrenciasEvento, fechaPrincipal } from '../../core/services/data.service';
+import { DataService, Evento, Contenido, DEFAULT_CONTENIDO, conContenidoDefaults, ocurrenciasEvento, fechaPrincipal, esVisible } from '../../core/services/data.service';
 import { FechaLargaPipe } from '../../core/util/fecha.pipe';
 
 declare global {
@@ -11,7 +11,7 @@ declare global {
   }
 }
 declare const YT: { Player: new (el: string, opts: object) => YTPlayer };
-interface YTPlayer { playVideo(): void; seekTo(s: number, a: boolean): void; getPlayerState(): number; getCurrentTime(): number; }
+interface YTPlayer { playVideo(): void; seekTo(s: number, a: boolean): void; getPlayerState(): number; getCurrentTime(): number; loadVideoById(id: string): void; }
 
 @Component({
   selector: 'app-home',
@@ -33,9 +33,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   fraseVisible = true;
   private fraseInterval: ReturnType<typeof setInterval> | null = null;
 
+  // Video de fondo del hero (configurable desde el admin)
+  videoTipo: 'youtube' | 'archivo' = 'youtube';
+  videoUrl = '';
+  private videoYoutubeId = DEFAULT_CONTENIDO.hero.video.youtubeId;
+  private ytReady = false;
   private ytPlayer: YTPlayer | null = null;
-  private loopInterval: ReturnType<typeof setInterval> | null = null;
-  private readonly CLIP_END = 8;
 
   constructor(private data: DataService, private zone: NgZone) {}
 
@@ -43,12 +46,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.data.listenToRef<Record<string, Evento>>('eventos', (val) => {
       const all = val ? Object.entries(val).map(([id, v]) => ({ ...v, id })) : [];
       this.proximosEventos = all
+        .filter(esVisible)
         .sort((a, b) => (fechaPrincipal(a) > fechaPrincipal(b) ? 1 : -1))
         .slice(0, 3);
     });
 
     this.data.listenToRef<Contenido>('contenido', (val) => {
-      if (val) this.contenido = { ...structuredClone(DEFAULT_CONTENIDO), ...val };
+      this.contenido = conContenidoDefaults(val);
+      const v = this.contenido.hero.video;
+      this.videoTipo = v.tipo;
+      this.videoUrl = v.url;
+      this.videoYoutubeId = v.youtubeId || this.videoYoutubeId;
+      this.zone.runOutsideAngular(() => this.aplicarHeroVideo());
     });
 
     this.fraseInterval = setInterval(() => {
@@ -64,9 +73,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.zone.runOutsideAngular(() => {
       if ((window as Window).YT && (window as Window).YT.Player) {
-        this.initPlayer();
+        this.ytReady = true;
+        this.aplicarHeroVideo();
       } else {
-        (window as Window).onYouTubeIframeAPIReady = () => this.initPlayer();
+        (window as Window).onYouTubeIframeAPIReady = () => {
+          this.ytReady = true;
+          this.aplicarHeroVideo();
+        };
         const tag = document.createElement('script');
         tag.src = 'https://www.youtube.com/iframe_api';
         document.head.appendChild(tag);
@@ -74,9 +87,19 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private initPlayer(): void {
+  /** Aplica la configuración de video: inicializa/actualiza el player de YouTube cuando corresponde. */
+  private aplicarHeroVideo(): void {
+    if (this.videoTipo !== 'youtube' || !this.ytReady || !this.videoYoutubeId) return;
+    if (this.ytPlayer) {
+      this.ytPlayer.loadVideoById(this.videoYoutubeId);
+    } else if (document.getElementById('yt-hero-player')) {
+      this.initPlayer(this.videoYoutubeId);
+    }
+  }
+
+  private initPlayer(videoId: string): void {
     this.ytPlayer = new YT.Player('yt-hero-player', {
-      videoId: 'fbjNfowfN-A',
+      videoId,
       playerVars: {
         autoplay: 1,
         mute: 1,
@@ -93,8 +116,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         onReady: (e: { target: YTPlayer }) => {
           e.target.playVideo();
           this.forceIframeSize();
-          this.startLoop();
         },
+        // Reproduce en bucle: al terminar, vuelve a empezar.
         onStateChange: (e: { data: number }) => {
           if (e.data === 0) {
             this.ytPlayer?.seekTo(0, true);
@@ -122,22 +145,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private startLoop(): void {
-    this.loopInterval = setInterval(() => {
-      if (!this.ytPlayer) return;
-      const state = this.ytPlayer.getPlayerState();
-      if (state === 1 && this.ytPlayer.getCurrentTime() >= this.CLIP_END) {
-        this.ytPlayer.seekTo(0, true);
-        this.ytPlayer.playVideo();
-      } else if (state === 0) {
-        this.ytPlayer.seekTo(0, true);
-        this.ytPlayer.playVideo();
-      }
-    }, 150);
-  }
-
   ngOnDestroy(): void {
-    if (this.loopInterval) clearInterval(this.loopInterval);
     if (this.fraseInterval) clearInterval(this.fraseInterval);
   }
 }

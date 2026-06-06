@@ -1,6 +1,10 @@
 <section class="hero">
   <div class="hero-video-wrap">
-    <div id="yt-hero-player"></div>
+    @if (videoTipo === 'archivo' && videoUrl) {
+      <video class="hero-bg-video" [src]="videoUrl" autoplay muted loop playsinline></video>
+    } @else {
+      <div id="yt-hero-player"></div>
+    }
   </div>
   <div class="hero-overlay"></div>
   <div class="container hero-content">
@@ -144,9 +148,12 @@
 <section class="section section-join">
   <div class="container">
     <div class="join-card">
-      <span class="label-tag">Súmate</span>
+      <span class="conv-badge" [class.abierta]="contenido.convocatoria.abierta">
+        <i class="fas" [class.fa-lock]="!contenido.convocatoria.abierta" [class.fa-lock-open]="contenido.convocatoria.abierta"></i>
+        {{ contenido.convocatoria.titulo }} · {{ contenido.convocatoria.estado }}
+      </span>
       <h2>¿Quieres bailar con nosotros?</h2>
-      <p>Recibimos nuevos integrantes durante todo el año. No necesitas experiencia previa: solo ganas de aprender la danza caporal y ser parte de la fraternidad.</p>
+      <p>{{ contenido.convocatoria.mensaje }}</p>
       <div class="join-info">
         @if (contenido.contacto.direccion) {
           <div class="join-item"><i class="fas fa-map-marker-alt"></i> {{ contenido.contacto.direccion }}</div>
@@ -156,9 +163,7 @@
         }
       </div>
       <div class="join-actions">
-        @if (contenido.contacto.email) {
-          <a [href]="'mailto:' + contenido.contacto.email" class="btn-gold"><i class="fas fa-paper-plane"></i> Escríbenos</a>
-        }
+        <a routerLink="/contacto" class="btn-gold"><i class="fas fa-envelope"></i> Contáctanos</a>
         <div class="join-socials">
           @if (contenido.contacto.instagram) {
             <a [href]="contenido.contacto.instagram" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>

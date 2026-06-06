@@ -1,0 +1,124 @@
+.contacto-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.contacto-form {
+  padding: 2rem;
+
+  h2 {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    color: var(--color-primary-dark);
+    margin-bottom: 0.35rem;
+  }
+  .form-intro {
+    color: var(--color-text-light);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.1rem;
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 0.4rem;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.7rem 0.85rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.92rem;
+      &:focus { outline: none; border-color: var(--color-primary); }
+    }
+    textarea { resize: vertical; }
+  }
+
+  .btn-primary { width: 100%; justify-content: center; margin-top: 0.5rem; }
+}
+
+.contacto-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.convocatoria-card {
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+  color: #fff;
+
+  &.abierta { background: linear-gradient(135deg, #1f8a4c, #27ae60); }
+
+  .conv-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.85rem;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 50px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.85rem;
+    i { color: var(--color-gold); }
+  }
+  p { font-size: 0.92rem; line-height: 1.6; color: rgba(255, 255, 255, 0.9); }
+}
+
+.info-card {
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+
+  h3 {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    color: var(--color-primary-dark);
+    margin-bottom: 1rem;
+  }
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--color-text-light);
+    font-size: 0.9rem;
+    margin-bottom: 0.7rem;
+    i { color: var(--color-primary); width: 18px; text-align: center; }
+  }
+  a.info-item:hover { color: var(--color-primary); }
+
+  .info-socials {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 1rem;
+    a {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(26, 196, 176, 0.1);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: var(--transition);
+      &:hover { background: var(--color-primary); color: #fff; transform: translateY(-2px); }
+    }
+  }
+}
+
+@media (max-width: 800px) {
+  .contacto-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+}

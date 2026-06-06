@@ -36,6 +36,7 @@ export class NavbarComponent {
     },
     { label: 'Playlist', route: '/playlist' },
     { label: 'Tutoriales', route: '/tutoriales' },
+    { label: 'Contacto', route: '/contacto' },
   ];
 
   @HostListener('window:scroll')

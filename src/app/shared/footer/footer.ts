@@ -21,6 +21,7 @@ export class FooterComponent implements OnInit {
     { label: 'Comisiones', route: '/comisiones' },
     { label: 'Playlist', route: '/playlist' },
     { label: 'Tutoriales', route: '/tutoriales' },
+    { label: 'Contacto', route: '/contacto' },
   ];
 
   constructor(private data: DataService) {}

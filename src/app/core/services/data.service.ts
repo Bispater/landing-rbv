@@ -23,6 +23,8 @@ export interface Evento {
   lugar?: string;
   imagen?: string;
   tipo: 'evento' | 'presentacion' | 'ensayo';
+  /** Si es false, la publicación queda oculta del sitio público (sin eliminarla). */
+  visible?: boolean;
 }
 
 /** Aviso emergente programado que se muestra en el sitio público entre `desde` y `hasta`. */
@@ -85,6 +87,7 @@ export interface Cancion {
   youtubeId?: string;
   duracion?: string;
   descripcion?: string;
+  visible?: boolean;
 }
 
 export interface Tutorial {
@@ -95,6 +98,7 @@ export interface Tutorial {
   nivel: 'principiante' | 'intermedio' | 'avanzado';
   duracion?: string;
   instructor?: string;
+  visible?: boolean;
 }
 
 export interface Foto {
@@ -106,11 +110,25 @@ export interface Foto {
   categoria: string;
   /** When set, this gallery item is a YouTube video: the thumbnail is used as the image and it plays in the lightbox. */
   youtubeId?: string;
+  visible?: boolean;
+}
+
+/** Una publicación está visible si su campo `visible` no es false (por defecto visible). */
+export function esVisible(item: { visible?: boolean }): boolean {
+  return item.visible !== false;
 }
 
 export interface Stat {
   num: string;
   label: string;
+}
+
+/** Configuración del video de fondo del hero. */
+export interface HeroVideo {
+  /** 'youtube' = se usa `youtubeId`; 'archivo' = se usa `url` (video subido a Cloudinary). */
+  tipo: 'youtube' | 'archivo';
+  youtubeId: string;
+  url: string;
 }
 
 /** Editable site-wide content (hero, about, contact), stored at the RTDB `contenido` node. */
@@ -122,11 +140,19 @@ export interface Contenido {
     descripcion: string;
     frases: string[];
     stats: Stat[];
+    video: HeroVideo;
   };
   about: {
     label: string;
     titulo: string;
     parrafos: string[];
+  };
+  /** Estado de la convocatoria (proceso de admisión de nuevos integrantes). */
+  convocatoria: {
+    titulo: string;
+    estado: string;
+    abierta: boolean;
+    mensaje: string;
   };
   contacto: {
     direccion: string;
@@ -150,6 +176,7 @@ export const DEFAULT_CONTENIDO: Contenido = {
       { num: '50+', label: 'Integrantes' },
       { num: '100+', label: 'Presentaciones' },
     ],
+    video: { tipo: 'youtube', youtubeId: 'fbjNfowfN-A', url: '' },
   },
   about: {
     label: 'Quiénes somos',
@@ -158,6 +185,13 @@ export const DEFAULT_CONTENIDO: Contenido = {
       'Somos una fraternidad de Caporales nacida en Valparaíso, filial de los Caporales Reales Brillantes Andinos de Arica. Llevamos a los cerros del puerto la fuerza, el ritmo y la alegría de esta danza del altiplano.',
       'Nuestro nombre, Reales Brillantes, refleja el brillo de los trajes, los cascabeles y la nobleza con que bailamos en cada carnaval y pasacalle.',
     ],
+  },
+  convocatoria: {
+    titulo: 'Convocatoria 2025',
+    estado: 'Cerrada',
+    abierta: false,
+    mensaje:
+      'La convocatoria 2025 está cerrada. ¡Pronto abriremos la próxima! Déjanos tu correo en Contacto y te avisaremos cuando puedas sumarte a la fraternidad.',
   },
   contacto: {
     direccion: 'Av. Argentina 747, Valparaíso',
@@ -171,6 +205,31 @@ export const DEFAULT_CONTENIDO: Contenido = {
 /** Returns the YouTube thumbnail URL for a video id (free, Google-CDN hosted). */
 export function youtubeThumb(id: string): string {
   return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+}
+
+/**
+ * Combina el contenido guardado con los valores por defecto (merge profundo en hero/about/contacto),
+ * garantizando que campos nuevos como `hero.video` siempre existan aunque el dato guardado sea antiguo.
+ */
+export function conContenidoDefaults(val: Partial<Contenido> | null | undefined): Contenido {
+  const d = structuredClone(DEFAULT_CONTENIDO);
+  if (!val) return d;
+  return {
+    hero: {
+      ...d.hero,
+      ...(val.hero ?? {}),
+      stats: val.hero?.stats ?? d.hero.stats,
+      frases: val.hero?.frases ?? d.hero.frases,
+      video: { ...d.hero.video, ...(val.hero?.video ?? {}) },
+    },
+    about: {
+      ...d.about,
+      ...(val.about ?? {}),
+      parrafos: val.about?.parrafos ?? d.about.parrafos,
+    },
+    convocatoria: { ...d.convocatoria, ...(val.convocatoria ?? {}) },
+    contacto: { ...d.contacto, ...(val.contacto ?? {}) },
+  };
 }
 
 @Injectable({ providedIn: 'root' })
@@ -197,10 +256,15 @@ export class DataService {
   }
 
   /**
-   * Uploads an image file to Cloudinary using an unsigned preset and returns its secure URL.
-   * Requires CLOUDINARY_CLOUD_NAME and CLOUDINARY_UPLOAD_PRESET to be configured.
+   * Sube un archivo (imagen o video) a Cloudinary con un preset sin firma y devuelve su URL segura.
+   * Usa el endpoint `auto` para aceptar imagen o video. Valida el tamaño máximo en MB.
+   * Requiere CLOUDINARY_CLOUD_NAME y CLOUDINARY_UPLOAD_PRESET configurados.
    */
-  async uploadImage(file: File): Promise<string> {
+  async uploadMedia(file: File, maxMb: number): Promise<string> {
+    if (file.size > maxMb * 1024 * 1024) {
+      const mb = (file.size / (1024 * 1024)).toFixed(1);
+      throw new Error(`El archivo pesa ${mb} MB y supera el máximo de ${maxMb} MB.`);
+    }
     const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET } = await import('../../cloudinary.config');
     if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
       throw new Error('Cloudinary no está configurado. Completa src/app/cloudinary.config.ts');
@@ -208,11 +272,11 @@ export class DataService {
     const form = new FormData();
     form.append('file', file);
     form.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`, {
       method: 'POST',
       body: form,
     });
-    if (!res.ok) throw new Error('Error al subir la imagen a Cloudinary');
+    if (!res.ok) throw new Error('Error al subir el archivo a Cloudinary');
     const data = await res.json();
     return data.secure_url as string;
   }

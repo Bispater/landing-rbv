@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Foto, DataService, youtubeThumb } from '../../core/services/data.service';
+import { Foto, DataService, youtubeThumb, esVisible } from '../../core/services/data.service';
 
 @Component({
   selector: 'app-galeria',
@@ -21,8 +21,9 @@ export class GaleriaComponent implements OnInit {
 
   ngOnInit(): void {
     this.data.listenToList<Foto>('fotos', (data) => {
-      this.fotos.set(data);
-      const cats = ['todas', ...new Set(data.map((f) => f.categoria))];
+      const visibles = data.filter(esVisible);
+      this.fotos.set(visibles);
+      const cats = ['todas', ...new Set(visibles.map((f) => f.categoria))];
       this.categorias.set(cats);
     });
   }
