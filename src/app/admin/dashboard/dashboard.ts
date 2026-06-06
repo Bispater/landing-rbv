@@ -66,7 +66,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // Vista previa de una publicación (cómo la vería un visitante)
   vistaPrevia = signal<{ tipo: 'foto' | 'tutorial' | 'cancion' | 'evento' | 'popup'; item: Foto | Tutorial | Cancion | Evento | Popup } | null>(null);
   previewVideoUrl = signal<SafeResourceUrl | null>(null);
-  readonly PREVIEW_MS = 5000;
+  previewPausado = signal(false);
+  readonly PREVIEW_MS = 20000;
   private previewTimer: ReturnType<typeof setTimeout> | null = null;
 
   guardando = signal(false);
@@ -75,6 +76,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   readonly MAX_IMAGEN_MB = 5;
   readonly MAX_VIDEO_MB = 50;
+
+  // Tiempos del recorte del video del hero, editables como mm:ss o segundos.
+  videoInicioTxt = '0';
+  videoFinTxt = '0';
 
   // Editable site content (hero/about/contact). Starts from defaults until RTDB loads.
   contenido = signal<Contenido>(structuredClone(DEFAULT_CONTENIDO));
@@ -100,6 +105,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.suscriptores.set(v.sort((a, b) => (a.fecha < b.fecha ? 1 : -1))));
     this.data.listenToRef<Contenido>('contenido', (val) => {
       this.contenido.set(conContenidoDefaults(val));
+      const v = this.contenido().hero.video;
+      this.videoInicioTxt = this.segATexto(v.inicio ?? 0);
+      this.videoFinTxt = this.segATexto(v.fin ?? 0);
     });
   }
 
@@ -119,12 +127,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
       yt ? this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube.com/embed/${yt}?autoplay=1`) : null,
     );
     document.body.style.overflow = 'hidden';
+    this.previewPausado.set(false);
     if (this.previewTimer) clearTimeout(this.previewTimer);
     this.previewTimer = setTimeout(() => this.cerrarPreview(), this.PREVIEW_MS);
   }
 
+  /** Pausa la cuenta regresiva (clic en cualquier lugar, como una historia de IG). */
+  pausarPreview(): void {
+    if (this.previewPausado()) return;
+    if (this.previewTimer) { clearTimeout(this.previewTimer); this.previewTimer = null; }
+    this.previewPausado.set(true);
+  }
+
   cerrarPreview(): void {
     if (this.previewTimer) { clearTimeout(this.previewTimer); this.previewTimer = null; }
+    this.previewPausado.set(false);
     this.vistaPrevia.set(null);
     this.previewVideoUrl.set(null);
     document.body.style.overflow = '';
@@ -175,6 +192,36 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.subiendoVideo.set(false);
       input.value = '';
     }
+  }
+
+  /** Convierte segundos a "m:ss" (0 → "0"). */
+  segATexto(n: number): string {
+    if (!n || n <= 0) return '0';
+    const m = Math.floor(n / 60);
+    const s = n % 60;
+    return m > 0 ? `${m}:${String(s).padStart(2, '0')}` : String(s);
+  }
+
+  /** Convierte "m:ss" o "ss" a segundos (vacío/ inválido → 0). */
+  textoASeg(txt: string): number {
+    const t = (txt || '').trim();
+    if (!t) return 0;
+    if (t.includes(':')) {
+      const [m, s] = t.split(':');
+      const seg = (parseInt(m, 10) || 0) * 60 + (parseInt(s, 10) || 0);
+      return seg > 0 ? seg : 0;
+    }
+    const n = parseInt(t, 10);
+    return isNaN(n) || n < 0 ? 0 : n;
+  }
+
+  /** Aplica los tiempos escritos (desde/hasta) al modelo del video. */
+  aplicarTiempos(): void {
+    const v = this.contenido().hero.video;
+    v.inicio = this.textoASeg(this.videoInicioTxt);
+    v.fin = this.textoASeg(this.videoFinTxt);
+    this.videoInicioTxt = this.segATexto(v.inicio);
+    this.videoFinTxt = this.segATexto(v.fin);
   }
 
   /** Si pegan un link de YouTube en el campo del video, extrae el ID de 11 caracteres. */
@@ -409,6 +456,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
   /** Une todos los correos de suscriptores separados por coma (para copiar y pegar en el correo). */
   correosSuscriptores(): string {
     return this.suscriptores().map((s) => s.email).join(', ');
+  }
+
+  async copiarCorreos(): Promise<void> {
+    const correos = this.correosSuscriptores();
+    if (!correos) return;
+    try {
+      await navigator.clipboard.writeText(correos);
+      this.snackbar.show(`${this.suscriptores().length} correos copiados al portapapeles`);
+    } catch {
+      this.snackbar.show('No se pudo copiar. Selecciónalos manualmente.', 'error');
+    }
   }
 
   async togglePopupActivo(p: Popup): Promise<void> {
