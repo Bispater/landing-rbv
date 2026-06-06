@@ -299,6 +299,7 @@
     .item-place { display: flex; align-items: center; gap: 0.3rem; i { font-size: 0.72rem; color: var(--color-primary-light); } }
   }
 
+  .dash-item-info .dash-item-badge,
   .dash-item-badge {
     font-size: 0.72rem;
     font-weight: 700;
@@ -306,11 +307,11 @@
     padding: 0.2rem 0.55rem;
     border-radius: 4px;
     background: var(--color-primary);
-    color: #fff;
+    color: #fff; // texto siempre blanco (antes una regla de span lo oscurecía)
     flex-shrink: 0;
 
     &.tut { background: #F59E0B; }
-    &.music { background: var(--color-gold-dark); }
+    &.music { background: var(--color-primary-dark); }
   }
 
   .btn-del {

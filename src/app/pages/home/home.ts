@@ -49,9 +49,19 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.data.listenToRef<Record<string, Evento>>('eventos', (val) => {
       const all = val ? Object.entries(val).map(([id, v]) => ({ ...v, id })) : [];
+      const d = new Date();
+      const hoy = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       this.proximosEventos = all
         .filter(esVisible)
-        .sort((a, b) => (fechaPrincipal(a) > fechaPrincipal(b) ? 1 : -1))
+        .sort((a, b) => {
+          const fa = fechaPrincipal(a);
+          const fb = fechaPrincipal(b);
+          const aFut = fa >= hoy;
+          const bFut = fb >= hoy;
+          if (aFut !== bFut) return aFut ? -1 : 1;       // futuros primero
+          if (aFut) return fa < fb ? -1 : 1;             // futuros: el más cercano primero
+          return fa > fb ? -1 : 1;                       // pasados: el más reciente primero
+        })
         .slice(0, 3);
     });
 
