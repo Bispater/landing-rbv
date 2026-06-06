@@ -777,7 +777,6 @@
         <!-- ESTATUTOS -->
         <div class="dash-title-row">
           <h2 class="dash-title"><i class="fas fa-scroll"></i> Estatutos</h2>
-          <button class="btn-toggle-form" (click)="cargarBaseEstatutos()" title="Cargar el texto base"><i class="fas fa-download"></i> Texto base</button>
         </div>
         <div class="dash-form card">
           <h3><i class="fas fa-file-pdf"></i> Documento PDF (opcional)</h3>
@@ -831,14 +830,13 @@
             </div>
           }
           @if (estatutos().length === 0) {
-            <p class="dash-empty">No hay artículos cargados. Agrega uno o usa "Texto base".</p>
+            <p class="dash-empty">No hay artículos cargados. Agrega uno con el botón de arriba.</p>
           }
         </div>
 
         <!-- REGLAMENTOS -->
         <div class="dash-title-row" style="margin-top: 2.5rem">
           <h2 class="dash-title"><i class="fas fa-gavel"></i> Reglamentos</h2>
-          <button class="btn-toggle-form" (click)="cargarBaseReglamentos()" title="Cargar el texto base"><i class="fas fa-download"></i> Texto base</button>
         </div>
         <div class="dash-form card">
           <h3><i class="fas fa-file-pdf"></i> Documento PDF (opcional)</h3>
@@ -902,7 +900,7 @@
             </div>
           }
           @if (reglamentos().length === 0) {
-            <p class="dash-empty">No hay reglamentos cargados. Agrega uno o usa "Texto base".</p>
+            <p class="dash-empty">No hay reglamentos cargados. Agrega uno con el botón de arriba.</p>
           }
         </div>
       </div>

@@ -20,8 +20,6 @@ import {
   youtubeThumb,
   ocurrenciasEvento,
 } from '../../core/services/data.service';
-import { ESTATUTOS_DEFAULT } from '../../pages/estatutos/estatutos';
-import { REGLAMENTOS_DEFAULT } from '../../pages/reglamentos/reglamentos';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { FechaInputComponent } from '../../shared/fecha-input/fecha-input';
@@ -511,14 +509,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       catch (e) { this.avisarError(e); }
     }
   }
-  private async cargarBaseDoc(path: 'estatutos' | 'reglamentos', def: DocSeccion[]): Promise<void> {
-    const ok = await this.confirm.ask({ titulo: 'Cargar texto base', mensaje: 'Reemplazará las secciones actuales con el texto base. ¿Continuar?', confirmar: 'Cargar', peligro: true });
-    if (!ok) return;
-    this.guardando.set(true);
-    try { await this.data.seedCollection(path, def); this.mostrarMensaje('Texto base cargado'); }
-    catch (e) { this.avisarError(e); }
-  }
-
   async agregarEstatuto(): Promise<void> {
     if (await this.agregarDoc('estatutos', this.nuevoEstatuto)) this.nuevoEstatuto = { titulo: '', contenido: '' };
   }
@@ -535,8 +525,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
   eliminarEstatuto(id: string): void { this.eliminarDoc('estatutos', id); }
   eliminarReglamento(id: string): void { this.eliminarDoc('reglamentos', id); }
-  cargarBaseEstatutos(): void { this.cargarBaseDoc('estatutos', ESTATUTOS_DEFAULT); }
-  cargarBaseReglamentos(): void { this.cargarBaseDoc('reglamentos', REGLAMENTOS_DEFAULT); }
 
   /** Sube un PDF a Cloudinary y lo guarda en el campo indicado del contenido. */
   async subirPdf(event: Event, campo: 'estatutosPdf' | 'reglamentosPdf'): Promise<void> {

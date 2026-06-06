@@ -62,3 +62,11 @@
   .regl-grid { grid-template-columns: 1fr; }
   .regl-card { flex-direction: column; }
 }
+
+.doc-empty {
+  text-align: center;
+  padding: 4rem 0;
+  color: var(--color-text-light);
+  i { font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.4; }
+  p { font-size: 1rem; }
+}

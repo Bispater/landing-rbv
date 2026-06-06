@@ -17,22 +17,29 @@
         <iframe [src]="pdfSafe()" title="Documento PDF"></iframe>
       </div>
     }
-    <div class="regl-grid">
-      @for (reg of reglamentos(); track reg.titulo) {
-        <div class="regl-card card">
-          <div class="regl-icon">
-            <i class="fas" [class]="'fas ' + (reg.icono || 'fa-file-alt')"></i>
+    @if (reglamentos().length) {
+      <div class="regl-grid">
+        @for (reg of reglamentos(); track reg.titulo) {
+          <div class="regl-card card">
+            <div class="regl-icon">
+              <i class="fas" [class]="'fas ' + (reg.icono || 'fa-file-alt')"></i>
+            </div>
+            <div class="regl-body">
+              <h3>{{ reg.titulo }}</h3>
+              <ul>
+                @for (item of items(reg.contenido); track item) {
+                  <li><i class="fas fa-check-circle"></i> {{ item }}</li>
+                }
+              </ul>
+            </div>
           </div>
-          <div class="regl-body">
-            <h3>{{ reg.titulo }}</h3>
-            <ul>
-              @for (item of items(reg.contenido); track item) {
-                <li><i class="fas fa-check-circle"></i> {{ item }}</li>
-              }
-            </ul>
-          </div>
-        </div>
-      }
-    </div>
+        }
+      </div>
+    } @else if (!pdfUrl()) {
+      <div class="doc-empty">
+        <i class="fas fa-gavel"></i>
+        <p>Aún no hay reglamentos publicados.</p>
+      </div>
+    }
   </div>
 </section>
