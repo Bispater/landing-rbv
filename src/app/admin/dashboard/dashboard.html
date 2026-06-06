@@ -48,10 +48,6 @@
   </aside>
 
   <main class="dash-main">
-    @if (mensaje()) {
-      <div class="dash-toast"><i class="fas fa-check-circle"></i> {{ mensaje() }}</div>
-    }
-
     <!-- EVENTOS -->
     @if (seccionActiva() === 'eventos') {
       <div class="dash-section">

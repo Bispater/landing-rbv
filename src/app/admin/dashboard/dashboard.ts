@@ -16,6 +16,8 @@ import {
   ocurrenciasEvento,
 } from '../../core/services/data.service';
 import { SeedService } from '../../core/services/seed.service';
+import { SnackbarService } from '../../core/services/snackbar.service';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { FechaInputComponent } from '../../shared/fecha-input/fecha-input';
 import { FechaLargaPipe } from '../../core/util/fecha.pipe';
 
@@ -57,7 +59,6 @@ export class DashboardComponent implements OnInit {
   ocurrenciasDe = ocurrenciasEvento;
 
   guardando = signal(false);
-  mensaje = signal('');
   sembrando = signal(false);
   subiendoFoto = signal(false);
 
@@ -68,6 +69,8 @@ export class DashboardComponent implements OnInit {
     protected auth: AuthService,
     private data: DataService,
     private seed: SeedService,
+    private snackbar: SnackbarService,
+    private confirm: ConfirmService,
     private router: Router,
   ) {}
 
@@ -90,13 +93,19 @@ export class DashboardComponent implements OnInit {
   }
 
   async sembrarDatos(): Promise<void> {
-    if (!confirm('Esto reemplazará TODO el contenido actual con los datos de ejemplo. ¿Continuar?')) return;
+    const ok = await this.confirm.ask({
+      titulo: 'Cargar datos de ejemplo',
+      mensaje: 'Esto reemplazará TODO el contenido actual con los datos de ejemplo. ¿Continuar?',
+      confirmar: 'Sí, cargar',
+      peligro: true,
+    });
+    if (!ok) return;
     this.sembrando.set(true);
     try {
       await this.seed.seedAll();
       this.mostrarMensaje('Datos de ejemplo cargados correctamente');
     } catch {
-      this.mostrarMensaje('Error al cargar los datos de ejemplo');
+      this.mostrarMensaje('Error al cargar los datos de ejemplo', 'error');
     } finally {
       this.sembrando.set(false);
     }
@@ -112,7 +121,7 @@ export class DashboardComponent implements OnInit {
       target.url = await this.data.uploadImage(file);
       this.mostrarMensaje('Imagen subida correctamente');
     } catch (e) {
-      this.mostrarMensaje(e instanceof Error ? e.message : 'Error al subir la imagen');
+      this.mostrarMensaje(e instanceof Error ? e.message : 'Error al subir la imagen', 'error');
     } finally {
       this.subiendoFoto.set(false);
       input.value = '';
@@ -154,7 +163,7 @@ export class DashboardComponent implements OnInit {
 
   async agregarEvento(): Promise<void> {
     const data = this.prepararEvento(this.nuevoEvento);
-    if (!data) { this.mostrarMensaje('Agrega un título y al menos una fecha'); return; }
+    if (!data) { this.mostrarMensaje('Agrega un título y al menos una fecha', 'error'); return; }
     this.guardando.set(true);
     await this.data.addItem('eventos', data);
     this.nuevoEvento = this.emptyEvento();
@@ -162,7 +171,7 @@ export class DashboardComponent implements OnInit {
   }
 
   async eliminarEvento(id: string): Promise<void> {
-    if (confirm('¿Eliminar este evento?')) {
+    if (await this.confirmarEliminacion('¿Eliminar este evento? Esta acción no se puede deshacer.')) {
       await this.data.deleteItem(`eventos/${id}`);
       this.mostrarMensaje('Evento eliminado');
     }
@@ -178,7 +187,7 @@ export class DashboardComponent implements OnInit {
     const ev = this.editandoEvento();
     if (!ev?.id) return;
     const prepared = this.prepararEvento(ev);
-    if (!prepared) { this.mostrarMensaje('Agrega un título y al menos una fecha'); return; }
+    if (!prepared) { this.mostrarMensaje('Agrega un título y al menos una fecha', 'error'); return; }
     this.guardando.set(true);
     const { id, ...data } = prepared as Evento;
     await this.data.updateItem(`eventos/${id}`, data);
@@ -195,7 +204,7 @@ export class DashboardComponent implements OnInit {
   }
 
   async eliminarTutorial(id: string): Promise<void> {
-    if (confirm('¿Eliminar este tutorial?')) {
+    if (await this.confirmarEliminacion('¿Eliminar este tutorial?')) {
       await this.data.deleteItem(`tutoriales/${id}`);
       this.mostrarMensaje('Tutorial eliminado');
     }
@@ -224,7 +233,7 @@ export class DashboardComponent implements OnInit {
   }
 
   async eliminarCancion(id: string): Promise<void> {
-    if (confirm('¿Eliminar esta canción?')) {
+    if (await this.confirmarEliminacion('¿Eliminar esta canción?')) {
       await this.data.deleteItem(`playlist/${id}`);
       this.mostrarMensaje('Canción eliminada');
     }
@@ -253,7 +262,7 @@ export class DashboardComponent implements OnInit {
   }
 
   async eliminarFoto(id: string): Promise<void> {
-    if (confirm('¿Eliminar esta foto?')) {
+    if (await this.confirmarEliminacion('¿Eliminar esta foto?')) {
       await this.data.deleteItem(`fotos/${id}`);
       this.mostrarMensaje('Foto eliminada');
     }
@@ -277,7 +286,7 @@ export class DashboardComponent implements OnInit {
   async agregarPopup(): Promise<void> {
     const p = this.nuevoPopup;
     if (!p.titulo || !p.mensaje || !p.desde || !p.hasta) {
-      this.mostrarMensaje('Completa título, mensaje y el rango de fechas');
+      this.mostrarMensaje('Completa título, mensaje y el rango de fechas', 'error');
       return;
     }
     this.guardando.set(true);
@@ -288,7 +297,7 @@ export class DashboardComponent implements OnInit {
   }
 
   async eliminarPopup(id: string): Promise<void> {
-    if (confirm('¿Eliminar este popup?')) {
+    if (await this.confirmarEliminacion('¿Eliminar este popup?')) {
       await this.data.deleteItem(`popups/${id}`);
       this.mostrarMensaje('Popup eliminado');
     }
@@ -318,10 +327,14 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/admin/login']);
   }
 
-  private mostrarMensaje(msg: string): void {
+  private mostrarMensaje(msg: string, tipo: 'ok' | 'error' = 'ok'): void {
     this.guardando.set(false);
-    this.mensaje.set(msg);
-    setTimeout(() => this.mensaje.set(''), 3000);
+    this.snackbar.show(msg, tipo);
+  }
+
+  /** Pide confirmación de borrado con el modal propio. */
+  private confirmarEliminacion(mensaje: string): Promise<boolean> {
+    return this.confirm.ask({ titulo: 'Eliminar', mensaje, confirmar: 'Eliminar', peligro: true });
   }
 
   private emptyEvento(): Partial<Evento> {
