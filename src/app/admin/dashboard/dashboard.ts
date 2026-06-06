@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,7 +17,6 @@ import {
   youtubeThumb,
   ocurrenciasEvento,
 } from '../../core/services/data.service';
-import { SeedService } from '../../core/services/seed.service';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { FechaInputComponent } from '../../shared/fecha-input/fecha-input';
@@ -32,7 +31,7 @@ type Section = 'eventos' | 'tutoriales' | 'playlist' | 'fotos' | 'popups' | 'con
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   seccionActiva = signal<Section>('eventos');
   eventos = signal<Evento[]>([]);
   tutoriales = signal<Tutorial[]>([]);
@@ -63,9 +62,9 @@ export class DashboardComponent implements OnInit {
   // Vista previa de una publicación (cómo la vería un visitante)
   vistaPrevia = signal<{ tipo: 'foto' | 'tutorial' | 'cancion' | 'evento' | 'popup'; item: Foto | Tutorial | Cancion | Evento | Popup } | null>(null);
   previewVideoUrl = signal<SafeResourceUrl | null>(null);
+  private previewTimer: ReturnType<typeof setTimeout> | null = null;
 
   guardando = signal(false);
-  sembrando = signal(false);
   subiendoFoto = signal(false);
   subiendoVideo = signal(false);
 
@@ -78,7 +77,6 @@ export class DashboardComponent implements OnInit {
   constructor(
     protected auth: AuthService,
     private data: DataService,
-    private seed: SeedService,
     private snackbar: SnackbarService,
     private confirm: ConfirmService,
     private sanitizer: DomSanitizer,
@@ -103,7 +101,8 @@ export class DashboardComponent implements OnInit {
     return foto.youtubeId ? youtubeThumb(foto.youtubeId) : foto.url;
   }
 
-  /** Abre la vista previa de una publicación (cómo la vería un visitante al hacer click). */
+  /** Abre la vista previa de una publicación (cómo la vería un visitante al hacer click).
+      Se cierra sola a los 4 segundos. */
   abrirPreview(tipo: 'foto' | 'tutorial' | 'cancion' | 'evento' | 'popup', item: Foto | Tutorial | Cancion | Evento | Popup): void {
     this.vistaPrevia.set({ tipo, item });
     const yt = (item as { youtubeId?: string }).youtubeId;
@@ -111,12 +110,19 @@ export class DashboardComponent implements OnInit {
       yt ? this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube.com/embed/${yt}?autoplay=1`) : null,
     );
     document.body.style.overflow = 'hidden';
+    if (this.previewTimer) clearTimeout(this.previewTimer);
+    this.previewTimer = setTimeout(() => this.cerrarPreview(), 4000);
   }
 
   cerrarPreview(): void {
+    if (this.previewTimer) { clearTimeout(this.previewTimer); this.previewTimer = null; }
     this.vistaPrevia.set(null);
     this.previewVideoUrl.set(null);
     document.body.style.overflow = '';
+  }
+
+  ngOnDestroy(): void {
+    if (this.previewTimer) clearTimeout(this.previewTimer);
   }
 
   /** Helpers de casteo para el template del preview. */
@@ -125,25 +131,6 @@ export class DashboardComponent implements OnInit {
   asCancion(i: unknown): Cancion { return i as Cancion; }
   asEvento(i: unknown): Evento { return i as Evento; }
   asPopup(i: unknown): Popup { return i as Popup; }
-
-  async sembrarDatos(): Promise<void> {
-    const ok = await this.confirm.ask({
-      titulo: 'Cargar datos de ejemplo',
-      mensaje: 'Esto reemplazará TODO el contenido actual con los datos de ejemplo. ¿Continuar?',
-      confirmar: 'Sí, cargar',
-      peligro: true,
-    });
-    if (!ok) return;
-    this.sembrando.set(true);
-    try {
-      await this.seed.seedAll();
-      this.mostrarMensaje('Datos de ejemplo cargados correctamente');
-    } catch {
-      this.mostrarMensaje('Error al cargar los datos de ejemplo', 'error');
-    } finally {
-      this.sembrando.set(false);
-    }
-  }
 
   /** Uploads a chosen image to Cloudinary and writes the resulting URL into the target foto object. */
   async subirImagen(event: Event, target: Partial<Foto>): Promise<void> {

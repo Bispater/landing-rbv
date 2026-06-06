@@ -36,10 +36,6 @@
     </nav>
 
     <div class="dash-footer-btns">
-      <button class="dash-seed" (click)="sembrarDatos()" [disabled]="sembrando()" title="Reemplaza todo con datos de ejemplo">
-        <i class="fas" [class.fa-database]="!sembrando()" [class.fa-spinner]="sembrando()" [class.fa-spin]="sembrando()"></i>
-        {{ sembrando() ? 'Cargando...' : 'Cargar datos de ejemplo' }}
-      </button>
       <a href="/" target="_blank" rel="noopener" class="dash-link"><i class="fas fa-globe"></i> Ver Sitio</a>
       <button class="dash-logout" (click)="cerrarSesion()">
         <i class="fas fa-sign-out-alt"></i> Salir
