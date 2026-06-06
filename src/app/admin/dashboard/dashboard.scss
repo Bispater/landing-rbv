@@ -888,21 +888,23 @@ label small {
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
   animation: previewPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 
-  .preview-tag {
+  .preview-countdown {
     position: absolute;
-    top: 0.85rem;
-    left: 0.85rem;
-    z-index: 2;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.25rem 0.7rem;
-    background: rgba(0, 0, 0, 0.6);
-    color: #fff;
-    border-radius: 50px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    z-index: 3;
+    background: rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+
+    .bar {
+      height: 100%;
+      width: 100%;
+      background: var(--color-primary);
+      transform-origin: left center;
+      animation: previewCountdown 5s linear forwards;
+    }
   }
 
   .preview-close {
@@ -992,4 +994,8 @@ label small {
 @keyframes previewPop {
   from { opacity: 0; transform: translateY(16px) scale(0.97); }
   to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes previewCountdown {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
 }

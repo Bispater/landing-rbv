@@ -853,8 +853,8 @@
 @if (vistaPrevia(); as vp) {
   <div class="preview-overlay" (click)="cerrarPreview()">
     <div class="preview-card" (click)="$event.stopPropagation()">
+      <div class="preview-countdown"><div class="bar"></div></div>
       <button class="preview-close" (click)="cerrarPreview()" aria-label="Cerrar"><i class="fas fa-times"></i></button>
-      <span class="preview-tag"><i class="fas fa-eye"></i> Vista previa</span>
 
       @if (previewVideoUrl(); as vurl) {
         <div class="preview-video"><iframe [src]="vurl" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>

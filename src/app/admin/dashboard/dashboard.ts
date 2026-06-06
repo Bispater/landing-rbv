@@ -62,6 +62,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // Vista previa de una publicación (cómo la vería un visitante)
   vistaPrevia = signal<{ tipo: 'foto' | 'tutorial' | 'cancion' | 'evento' | 'popup'; item: Foto | Tutorial | Cancion | Evento | Popup } | null>(null);
   previewVideoUrl = signal<SafeResourceUrl | null>(null);
+  readonly PREVIEW_MS = 5000;
   private previewTimer: ReturnType<typeof setTimeout> | null = null;
 
   guardando = signal(false);
@@ -111,7 +112,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     );
     document.body.style.overflow = 'hidden';
     if (this.previewTimer) clearTimeout(this.previewTimer);
-    this.previewTimer = setTimeout(() => this.cerrarPreview(), 4000);
+    this.previewTimer = setTimeout(() => this.cerrarPreview(), this.PREVIEW_MS);
   }
 
   cerrarPreview(): void {
