@@ -1016,10 +1016,11 @@ label small {
 .msg-fecha { font-size: 0.75rem; color: var(--color-text-light); }
 .msg-texto {
   font-size: 0.88rem;
-  color: var(--color-text);
+  color: var(--color-text-light);
   line-height: 1.5;
   margin-top: 0.25rem;
   white-space: pre-line;
+  flex-basis: 100%;
 }
 
 /* Fila de foto (lista) */
@@ -1050,3 +1051,26 @@ label small {
 }
 
 .sus-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+/* Botón flotante de guardar (Contenido) */
+.fab-guardar {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 1500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(14, 155, 138, 0.45);
+  transition: var(--transition);
+  &:hover:not(:disabled) { background: var(--color-primary-dark); transform: translateY(-2px); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}

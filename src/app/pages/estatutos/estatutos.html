@@ -12,7 +12,7 @@
       <aside class="doc-nav">
         <h4>Índice</h4>
         <ul>
-          @for (sec of secciones; track sec.titulo; let i = $index) {
+          @for (sec of secciones(); track sec.titulo; let i = $index) {
             <li><a [href]="'#art-' + i">{{ sec.titulo | slice:0:30 }}...</a></li>
           }
         </ul>
@@ -26,7 +26,7 @@
             <p class="doc-meta">Folclore Andino · Valparaíso, Chile</p>
           </div>
         </div>
-        @for (sec of secciones; track sec.titulo; let i = $index) {
+        @for (sec of secciones(); track sec.titulo; let i = $index) {
           <div class="doc-article" [id]="'art-' + i">
             <div class="art-num">Art. {{ i + 1 }}</div>
             <div class="art-body">

@@ -7,6 +7,8 @@
     "comisiones": { ".read": true, ".write": "auth != null" },
     "popups":     { ".read": true, ".write": "auth != null" },
     "contenido":  { ".read": true, ".write": "auth != null" },
+    "estatutos":  { ".read": true, ".write": "auth != null" },
+    "reglamentos":{ ".read": true, ".write": "auth != null" },
 
     "mensajes": {
       ".read": "auth != null",

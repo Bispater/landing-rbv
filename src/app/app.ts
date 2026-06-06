@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
+import { Router, RouterOutlet, NavigationEnd, NavigationStart, NavigationCancel, NavigationError } from '@angular/router';
 import { NavbarComponent } from './shared/navbar/navbar';
 import { FooterComponent } from './shared/footer/footer';
 import { PopupComponent } from './shared/popup/popup';
@@ -25,5 +25,16 @@ export class App {
       startWith(this.router.url.startsWith('/admin'))
     ),
     { initialValue: this.router.url.startsWith('/admin') }
+  );
+
+  // Indicador de carga al navegar (la página puede tardar en cargar su chunk en celular).
+  cargando = toSignal(
+    this.router.events.pipe(
+      filter(e =>
+        e instanceof NavigationStart || e instanceof NavigationEnd ||
+        e instanceof NavigationCancel || e instanceof NavigationError),
+      map(e => e instanceof NavigationStart)
+    ),
+    { initialValue: false }
   );
 }

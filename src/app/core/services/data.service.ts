@@ -40,6 +40,14 @@ export interface Popup {
   activo: boolean;
 }
 
+/** Sección de un documento (estatutos o reglamentos). En reglamentos, `contenido` es una regla por línea. */
+export interface DocSeccion {
+  id?: string;
+  titulo: string;
+  contenido: string;
+  icono?: string;
+}
+
 /** Mensaje enviado desde el formulario de contacto. */
 export interface Mensaje {
   id?: string;

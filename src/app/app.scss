@@ -9,3 +9,28 @@
     min-height: 100vh;
   }
 }
+
+/* Barra de carga al navegar entre páginas */
+.route-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 2000;
+  background: rgba(26, 196, 176, 0.2);
+  overflow: hidden;
+
+  span {
+    position: absolute;
+    height: 100%;
+    width: 40%;
+    background: var(--color-gold, #C08B21);
+    animation: routeBar 1s ease-in-out infinite;
+  }
+}
+
+@keyframes routeBar {
+  0% { left: -40%; }
+  100% { left: 100%; }
+}

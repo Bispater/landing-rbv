@@ -1,3 +1,6 @@
+@if (cargando()) {
+  <div class="route-loading"><span></span></div>
+}
 @if (!isAdminRoute()) {
   <app-navbar></app-navbar>
 }

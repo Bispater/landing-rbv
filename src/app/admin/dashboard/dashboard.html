@@ -33,6 +33,10 @@
               (click)="setSeccion('mensajes')">
         <i class="fas fa-inbox"></i> Mensajes
       </button>
+      <button class="dash-nav-btn" [class.active]="seccionActiva() === 'documentos'"
+              (click)="setSeccion('documentos')">
+        <i class="fas fa-scroll"></i> Documentos
+      </button>
       <button class="dash-nav-btn" [class.active]="seccionActiva() === 'contenido'"
               (click)="setSeccion('contenido')">
         <i class="fas fa-sliders-h"></i> Contenido
@@ -754,6 +758,113 @@
       </div>
     }
 
+    <!-- DOCUMENTOS: ESTATUTOS Y REGLAMENTOS -->
+    @if (seccionActiva() === 'documentos') {
+      <div class="dash-section">
+        <!-- ESTATUTOS -->
+        <div class="dash-title-row">
+          <h2 class="dash-title"><i class="fas fa-scroll"></i> Estatutos</h2>
+          <button class="btn-toggle-form" (click)="cargarBaseEstatutos()" title="Cargar el texto base"><i class="fas fa-download"></i> Texto base</button>
+        </div>
+        <div class="dash-form card">
+          <h3>Nuevo artículo</h3>
+          <div class="form-group">
+            <label>Título</label>
+            <input type="text" [(ngModel)]="nuevoEstatuto.titulo" placeholder="Ej: Artículo 9 – ..." />
+          </div>
+          <div class="form-group">
+            <label>Contenido</label>
+            <textarea [(ngModel)]="nuevoEstatuto.contenido" rows="3" placeholder="Texto del artículo"></textarea>
+          </div>
+          <button class="btn-add" (click)="agregarEstatuto()" [disabled]="guardando()"><i class="fas fa-plus"></i> Agregar artículo</button>
+        </div>
+        <div class="dash-list">
+          @for (e of estatutos(); track e.id) {
+            <div class="dash-item" [class.editing]="editandoEstatuto()?.id === e.id">
+              @if (editandoEstatuto()?.id === e.id) {
+                <div class="dash-edit-form">
+                  <div class="form-group"><label>Título</label><input type="text" [(ngModel)]="editandoEstatuto()!.titulo" /></div>
+                  <div class="form-group"><label>Contenido</label><textarea [(ngModel)]="editandoEstatuto()!.contenido" rows="3"></textarea></div>
+                  <div class="edit-actions">
+                    <button class="btn-save" (click)="guardarEstatuto()" [disabled]="guardando()"><i class="fas fa-check"></i> Guardar</button>
+                    <button class="btn-cancel" (click)="editandoEstatuto.set(null)"><i class="fas fa-times"></i> Cancelar</button>
+                  </div>
+                </div>
+              } @else {
+                <div class="dash-item-info">
+                  <strong>{{ e.titulo }}</strong>
+                  <span class="msg-texto">{{ e.contenido }}</span>
+                </div>
+                <div class="item-btns">
+                  <button class="btn-edit" (click)="editandoEstatuto.set({ ...e })" title="Editar"><i class="fas fa-pencil-alt"></i></button>
+                  <button class="btn-del" (click)="eliminarEstatuto(e.id!)" title="Eliminar"><i class="fas fa-trash"></i></button>
+                </div>
+              }
+            </div>
+          }
+          @if (estatutos().length === 0) {
+            <p class="dash-empty">No hay artículos cargados. Agrega uno o usa "Texto base".</p>
+          }
+        </div>
+
+        <!-- REGLAMENTOS -->
+        <div class="dash-title-row" style="margin-top: 2.5rem">
+          <h2 class="dash-title"><i class="fas fa-gavel"></i> Reglamentos</h2>
+          <button class="btn-toggle-form" (click)="cargarBaseReglamentos()" title="Cargar el texto base"><i class="fas fa-download"></i> Texto base</button>
+        </div>
+        <div class="dash-form card">
+          <h3>Nuevo reglamento</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Título</label>
+              <input type="text" [(ngModel)]="nuevoReglamento.titulo" placeholder="Ej: Reglamento de ..." />
+            </div>
+            <div class="form-group">
+              <label>Ícono <small>(opcional, ej: fa-users)</small></label>
+              <input type="text" [(ngModel)]="nuevoReglamento.icono" placeholder="fa-file-alt" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Reglas <small>(una por línea)</small></label>
+            <textarea [(ngModel)]="nuevoReglamento.contenido" rows="4" placeholder="Una regla por línea..."></textarea>
+          </div>
+          <button class="btn-add" (click)="agregarReglamento()" [disabled]="guardando()"><i class="fas fa-plus"></i> Agregar reglamento</button>
+        </div>
+        <div class="dash-list">
+          @for (r of reglamentos(); track r.id) {
+            <div class="dash-item" [class.editing]="editandoReglamento()?.id === r.id">
+              @if (editandoReglamento()?.id === r.id) {
+                <div class="dash-edit-form">
+                  <div class="form-row">
+                    <div class="form-group"><label>Título</label><input type="text" [(ngModel)]="editandoReglamento()!.titulo" /></div>
+                    <div class="form-group"><label>Ícono</label><input type="text" [(ngModel)]="editandoReglamento()!.icono" /></div>
+                  </div>
+                  <div class="form-group"><label>Reglas (una por línea)</label><textarea [(ngModel)]="editandoReglamento()!.contenido" rows="4"></textarea></div>
+                  <div class="edit-actions">
+                    <button class="btn-save" (click)="guardarReglamento()" [disabled]="guardando()"><i class="fas fa-check"></i> Guardar</button>
+                    <button class="btn-cancel" (click)="editandoReglamento.set(null)"><i class="fas fa-times"></i> Cancelar</button>
+                  </div>
+                </div>
+              } @else {
+                <div class="dash-item-info">
+                  <span class="dash-item-badge"><i class="fas" [class]="'fas ' + (r.icono || 'fa-file-alt')"></i></span>
+                  <strong>{{ r.titulo }}</strong>
+                  <span class="msg-texto">{{ r.contenido }}</span>
+                </div>
+                <div class="item-btns">
+                  <button class="btn-edit" (click)="editandoReglamento.set({ ...r })" title="Editar"><i class="fas fa-pencil-alt"></i></button>
+                  <button class="btn-del" (click)="eliminarReglamento(r.id!)" title="Eliminar"><i class="fas fa-trash"></i></button>
+                </div>
+              }
+            </div>
+          }
+          @if (reglamentos().length === 0) {
+            <p class="dash-empty">No hay reglamentos cargados. Agrega uno o usa "Texto base".</p>
+          }
+        </div>
+      </div>
+    }
+
     <!-- CONTENIDO DEL SITIO -->
     @if (seccionActiva() === 'contenido') {
       <div class="dash-section">
@@ -923,6 +1034,12 @@
       </div>
     }
   </main>
+
+  @if (seccionActiva() === 'contenido') {
+    <button class="fab-guardar" (click)="guardarContenido()" [disabled]="guardando()">
+      <i class="fas fa-save"></i> Guardar cambios
+    </button>
+  }
 </div>
 
 <!-- VISTA PREVIA (cómo lo ve un visitante) -->

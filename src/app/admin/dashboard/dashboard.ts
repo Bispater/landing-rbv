@@ -13,18 +13,21 @@ import {
   Popup,
   Mensaje,
   Suscriptor,
+  DocSeccion,
   Contenido,
   DEFAULT_CONTENIDO,
   conContenidoDefaults,
   youtubeThumb,
   ocurrenciasEvento,
 } from '../../core/services/data.service';
+import { ESTATUTOS_DEFAULT } from '../../pages/estatutos/estatutos';
+import { REGLAMENTOS_DEFAULT } from '../../pages/reglamentos/reglamentos';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { FechaInputComponent } from '../../shared/fecha-input/fecha-input';
 import { FechaLargaPipe } from '../../core/util/fecha.pipe';
 
-type Section = 'eventos' | 'tutoriales' | 'playlist' | 'fotos' | 'popups' | 'mensajes' | 'contenido';
+type Section = 'eventos' | 'tutoriales' | 'playlist' | 'fotos' | 'popups' | 'mensajes' | 'documentos' | 'contenido';
 
 @Component({
   selector: 'app-dashboard',
@@ -42,6 +45,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   popups = signal<Popup[]>([]);
   mensajes = signal<Mensaje[]>([]);
   suscriptores = signal<Suscriptor[]>([]);
+  estatutos = signal<DocSeccion[]>([]);
+  reglamentos = signal<DocSeccion[]>([]);
+
+  nuevoEstatuto: Partial<DocSeccion> = { titulo: '', contenido: '' };
+  nuevoReglamento: Partial<DocSeccion> = { titulo: '', contenido: '', icono: 'fa-file-alt' };
+  editandoEstatuto = signal<DocSeccion | null>(null);
+  editandoReglamento = signal<DocSeccion | null>(null);
 
   nuevoEvento: Partial<Evento> = this.emptyEvento();
   nuevoTutorial: Partial<Tutorial> = this.emptyTutorial();
@@ -103,6 +113,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.mensajes.set(v.sort((a, b) => (a.fecha < b.fecha ? 1 : -1))));
     this.data.listenToList<Suscriptor>('suscriptores', (v) =>
       this.suscriptores.set(v.sort((a, b) => (a.fecha < b.fecha ? 1 : -1))));
+    this.data.listenToList<DocSeccion>('estatutos', (v) => this.estatutos.set(v));
+    this.data.listenToList<DocSeccion>('reglamentos', (v) => this.reglamentos.set(v));
     this.data.listenToRef<Contenido>('contenido', (val) => {
       this.contenido.set(conContenidoDefaults(val));
       const v = this.contenido().hero.video;
@@ -468,6 +480,53 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.snackbar.show('No se pudo copiar. Selecciónalos manualmente.', 'error');
     }
   }
+
+  // ---- Documentos (estatutos / reglamentos) ----
+  private async agregarDoc(path: 'estatutos' | 'reglamentos', item: Partial<DocSeccion>): Promise<boolean> {
+    if (!item.titulo || !item.contenido) { this.mostrarMensaje('Completa el título y el contenido', 'error'); return false; }
+    this.guardando.set(true);
+    try { await this.data.addItem(path, item); this.mostrarMensaje('Sección agregada'); return true; }
+    catch (e) { this.avisarError(e); return false; }
+  }
+  private async guardarDoc(path: 'estatutos' | 'reglamentos', item: DocSeccion): Promise<void> {
+    if (!item.id) return;
+    this.guardando.set(true);
+    const { id, ...data } = item;
+    try { await this.data.updateItem(`${path}/${id}`, data); this.mostrarMensaje('Sección actualizada'); }
+    catch (e) { this.avisarError(e); }
+  }
+  private async eliminarDoc(path: 'estatutos' | 'reglamentos', id: string): Promise<void> {
+    if (await this.confirmarEliminacion('¿Eliminar esta sección?')) {
+      try { await this.data.deleteItem(`${path}/${id}`); this.mostrarMensaje('Sección eliminada'); }
+      catch (e) { this.avisarError(e); }
+    }
+  }
+  private async cargarBaseDoc(path: 'estatutos' | 'reglamentos', def: DocSeccion[]): Promise<void> {
+    const ok = await this.confirm.ask({ titulo: 'Cargar texto base', mensaje: 'Reemplazará las secciones actuales con el texto base. ¿Continuar?', confirmar: 'Cargar', peligro: true });
+    if (!ok) return;
+    this.guardando.set(true);
+    try { await this.data.seedCollection(path, def); this.mostrarMensaje('Texto base cargado'); }
+    catch (e) { this.avisarError(e); }
+  }
+
+  async agregarEstatuto(): Promise<void> {
+    if (await this.agregarDoc('estatutos', this.nuevoEstatuto)) this.nuevoEstatuto = { titulo: '', contenido: '' };
+  }
+  async agregarReglamento(): Promise<void> {
+    if (await this.agregarDoc('reglamentos', this.nuevoReglamento)) this.nuevoReglamento = { titulo: '', contenido: '', icono: 'fa-file-alt' };
+  }
+  async guardarEstatuto(): Promise<void> {
+    const e = this.editandoEstatuto(); if (!e) return;
+    await this.guardarDoc('estatutos', e); this.editandoEstatuto.set(null);
+  }
+  async guardarReglamento(): Promise<void> {
+    const r = this.editandoReglamento(); if (!r) return;
+    await this.guardarDoc('reglamentos', r); this.editandoReglamento.set(null);
+  }
+  eliminarEstatuto(id: string): void { this.eliminarDoc('estatutos', id); }
+  eliminarReglamento(id: string): void { this.eliminarDoc('reglamentos', id); }
+  cargarBaseEstatutos(): void { this.cargarBaseDoc('estatutos', ESTATUTOS_DEFAULT); }
+  cargarBaseReglamentos(): void { this.cargarBaseDoc('reglamentos', REGLAMENTOS_DEFAULT); }
 
   async togglePopupActivo(p: Popup): Promise<void> {
     if (!p.id) return;

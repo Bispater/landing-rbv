@@ -9,15 +9,15 @@
 <section class="section">
   <div class="container">
     <div class="regl-grid">
-      @for (reg of reglamentos; track reg.titulo) {
+      @for (reg of reglamentos(); track reg.titulo) {
         <div class="regl-card card">
           <div class="regl-icon">
-            <i class="fas" [class]="'fas ' + reg.icono"></i>
+            <i class="fas" [class]="'fas ' + (reg.icono || 'fa-file-alt')"></i>
           </div>
           <div class="regl-body">
             <h3>{{ reg.titulo }}</h3>
             <ul>
-              @for (item of reg.items; track item) {
+              @for (item of items(reg.contenido); track item) {
                 <li><i class="fas fa-check-circle"></i> {{ item }}</li>
               }
             </ul>
