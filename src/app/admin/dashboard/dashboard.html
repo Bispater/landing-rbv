@@ -704,8 +704,20 @@
     <!-- MENSAJES Y SUSCRIPTORES -->
     @if (seccionActiva() === 'mensajes') {
       <div class="dash-section">
-        <h2 class="dash-title"><i class="fas fa-inbox"></i> Mensajes de contacto</h2>
-        <div class="dash-list" style="margin-top: 1rem">
+        <div class="dash-title-row">
+          <h2 class="dash-title"><i class="fas fa-inbox"></i> Mensajes de contacto ({{ mensajes().length }})</h2>
+          @if (mensajes().length > 0) {
+            <div class="sus-actions">
+              <button class="btn-toggle-form" (click)="copiarTexto(correosMensajes())" title="Copiar todos los correos">
+                <i class="fas fa-copy"></i> Copiar correos
+              </button>
+              <a class="btn-toggle-form" [href]="'mailto:?bcc=' + correosMensajes()" title="Escribir a todos (CCO)">
+                <i class="fas fa-paper-plane"></i> Escribir a todos
+              </a>
+            </div>
+          }
+        </div>
+        <div class="dash-list">
           @for (m of mensajes(); track m.id) {
             <div class="dash-item msg-item">
               <div class="dash-item-info">
@@ -716,6 +728,7 @@
                 <p class="msg-texto">{{ m.mensaje }}</p>
               </div>
               <div class="item-btns">
+                <a class="btn-edit" [href]="responderUrl(m)" title="Responder"><i class="fas fa-reply"></i></a>
                 <button class="btn-del" (click)="eliminarMensaje(m.id!)" title="Eliminar"><i class="fas fa-trash"></i></button>
               </div>
             </div>
@@ -729,7 +742,7 @@
           <h2 class="dash-title"><i class="fas fa-bell"></i> Suscriptores ({{ suscriptores().length }})</h2>
           @if (suscriptores().length > 0) {
             <div class="sus-actions">
-              <button class="btn-toggle-form" (click)="copiarCorreos()" title="Copiar todos los correos">
+              <button class="btn-toggle-form" (click)="copiarTexto(correosSuscriptores())" title="Copiar todos los correos">
                 <i class="fas fa-copy"></i> Copiar correos
               </button>
               <a class="btn-toggle-form" [href]="'mailto:?bcc=' + correosSuscriptores()" title="Abrir correo a todos (CCO)">

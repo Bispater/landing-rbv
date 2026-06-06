@@ -470,12 +470,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return this.suscriptores().map((s) => s.email).join(', ');
   }
 
-  async copiarCorreos(): Promise<void> {
-    const correos = this.correosSuscriptores();
-    if (!correos) return;
+  /** Correos únicos de quienes enviaron mensajes de contacto. */
+  correosMensajes(): string {
+    return [...new Set(this.mensajes().map((m) => m.email).filter(Boolean))].join(', ');
+  }
+
+  /** mailto para responder a un mensaje puntual. */
+  responderUrl(m: Mensaje): string {
+    return `mailto:${m.email}?subject=${encodeURIComponent('Re: ' + (m.tipo || 'tu mensaje'))}`;
+  }
+
+  async copiarTexto(texto: string): Promise<void> {
+    if (!texto) return;
     try {
-      await navigator.clipboard.writeText(correos);
-      this.snackbar.show(`${this.suscriptores().length} correos copiados al portapapeles`);
+      await navigator.clipboard.writeText(texto);
+      this.snackbar.show('Correos copiados al portapapeles');
     } catch {
       this.snackbar.show('No se pudo copiar. Selecciónalos manualmente.', 'error');
     }
