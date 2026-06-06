@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AuthService } from '../../core/services/auth.service';
 import {
   DataService,
@@ -59,6 +60,10 @@ export class DashboardComponent implements OnInit {
 
   ocurrenciasDe = ocurrenciasEvento;
 
+  // Vista previa de una publicación (cómo la vería un visitante)
+  vistaPrevia = signal<{ tipo: 'foto' | 'tutorial' | 'cancion' | 'evento' | 'popup'; item: Foto | Tutorial | Cancion | Evento | Popup } | null>(null);
+  previewVideoUrl = signal<SafeResourceUrl | null>(null);
+
   guardando = signal(false);
   sembrando = signal(false);
   subiendoFoto = signal(false);
@@ -76,6 +81,7 @@ export class DashboardComponent implements OnInit {
     private seed: SeedService,
     private snackbar: SnackbarService,
     private confirm: ConfirmService,
+    private sanitizer: DomSanitizer,
     private router: Router,
   ) {}
 
@@ -96,6 +102,29 @@ export class DashboardComponent implements OnInit {
   fotoThumb(foto: Foto): string {
     return foto.youtubeId ? youtubeThumb(foto.youtubeId) : foto.url;
   }
+
+  /** Abre la vista previa de una publicación (cómo la vería un visitante al hacer click). */
+  abrirPreview(tipo: 'foto' | 'tutorial' | 'cancion' | 'evento' | 'popup', item: Foto | Tutorial | Cancion | Evento | Popup): void {
+    this.vistaPrevia.set({ tipo, item });
+    const yt = (item as { youtubeId?: string }).youtubeId;
+    this.previewVideoUrl.set(
+      yt ? this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube.com/embed/${yt}?autoplay=1`) : null,
+    );
+    document.body.style.overflow = 'hidden';
+  }
+
+  cerrarPreview(): void {
+    this.vistaPrevia.set(null);
+    this.previewVideoUrl.set(null);
+    document.body.style.overflow = '';
+  }
+
+  /** Helpers de casteo para el template del preview. */
+  asFoto(i: unknown): Foto { return i as Foto; }
+  asTutorial(i: unknown): Tutorial { return i as Tutorial; }
+  asCancion(i: unknown): Cancion { return i as Cancion; }
+  asEvento(i: unknown): Evento { return i as Evento; }
+  asPopup(i: unknown): Popup { return i as Popup; }
 
   async sembrarDatos(): Promise<void> {
     const ok = await this.confirm.ask({
@@ -357,7 +386,9 @@ export class DashboardComponent implements OnInit {
 
   async togglePopupActivo(p: Popup): Promise<void> {
     if (!p.id) return;
-    await this.data.updateItem(`popups/${p.id}`, { activo: !p.activo });
+    try {
+      await this.data.updateItem(`popups/${p.id}`, { activo: !p.activo });
+    } catch (e) { this.avisarError(e); }
   }
 
   async cerrarSesion(): Promise<void> {

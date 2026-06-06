@@ -180,11 +180,13 @@
                   @if (ev.lugar) { <span class="item-place"><i class="fas fa-map-marker-alt"></i> {{ ev.lugar }}</span> }
                 </div>
                 <div class="item-btns">
-                  <button class="btn-edit" (click)="toggleVisible('eventos', ev)" [title]="ev.visible === false ? 'Mostrar' : 'Ocultar'">
-                    <i class="fas" [class.fa-eye]="ev.visible !== false" [class.fa-eye-slash]="ev.visible === false"></i>
+                  <button class="switch" [class.on]="ev.visible !== false" (click)="toggleVisible('eventos', ev)"
+                          [title]="ev.visible === false ? 'Oculto — clic para publicar' : 'Publicado — clic para ocultar'">
+                    <span class="switch-knob"></span>
                   </button>
-                  <button class="btn-edit" (click)="editarEvento(ev)"><i class="fas fa-pencil-alt"></i></button>
-                  <button class="btn-del" (click)="eliminarEvento(ev.id!)"><i class="fas fa-trash"></i></button>
+                  <button class="btn-edit" (click)="abrirPreview('evento', ev)" title="Previsualizar"><i class="fas fa-eye"></i></button>
+                  <button class="btn-edit" (click)="editarEvento(ev)" title="Editar"><i class="fas fa-pencil-alt"></i></button>
+                  <button class="btn-del" (click)="eliminarEvento(ev.id!)" title="Eliminar"><i class="fas fa-trash"></i></button>
                 </div>
               }
             </div>
@@ -302,11 +304,13 @@
                   <span>ID: {{ tut.youtubeId }}</span>
                 </div>
                 <div class="item-btns">
-                  <button class="btn-edit" (click)="toggleVisible('tutoriales', tut)" [title]="tut.visible === false ? 'Mostrar' : 'Ocultar'">
-                    <i class="fas" [class.fa-eye]="tut.visible !== false" [class.fa-eye-slash]="tut.visible === false"></i>
+                  <button class="switch" [class.on]="tut.visible !== false" (click)="toggleVisible('tutoriales', tut)"
+                          [title]="tut.visible === false ? 'Oculto — clic para publicar' : 'Publicado — clic para ocultar'">
+                    <span class="switch-knob"></span>
                   </button>
-                  <button class="btn-edit" (click)="editarTutorial(tut)"><i class="fas fa-pencil-alt"></i></button>
-                  <button class="btn-del" (click)="eliminarTutorial(tut.id!)"><i class="fas fa-trash"></i></button>
+                  <button class="btn-edit" (click)="abrirPreview('tutorial', tut)" title="Previsualizar"><i class="fas fa-eye"></i></button>
+                  <button class="btn-edit" (click)="editarTutorial(tut)" title="Editar"><i class="fas fa-pencil-alt"></i></button>
+                  <button class="btn-del" (click)="eliminarTutorial(tut.id!)" title="Eliminar"><i class="fas fa-trash"></i></button>
                 </div>
               }
             </div>
@@ -408,11 +412,13 @@
                   <span>{{ c.artista }}{{ c.duracion ? ' · ' + c.duracion : '' }}</span>
                 </div>
                 <div class="item-btns">
-                  <button class="btn-edit" (click)="toggleVisible('playlist', c)" [title]="c.visible === false ? 'Mostrar' : 'Ocultar'">
-                    <i class="fas" [class.fa-eye]="c.visible !== false" [class.fa-eye-slash]="c.visible === false"></i>
+                  <button class="switch" [class.on]="c.visible !== false" (click)="toggleVisible('playlist', c)"
+                          [title]="c.visible === false ? 'Oculto — clic para publicar' : 'Publicado — clic para ocultar'">
+                    <span class="switch-knob"></span>
                   </button>
-                  <button class="btn-edit" (click)="editarCancion(c)"><i class="fas fa-pencil-alt"></i></button>
-                  <button class="btn-del" (click)="eliminarCancion(c.id!)"><i class="fas fa-trash"></i></button>
+                  <button class="btn-edit" (click)="abrirPreview('cancion', c)" title="Previsualizar"><i class="fas fa-eye"></i></button>
+                  <button class="btn-edit" (click)="editarCancion(c)" title="Editar"><i class="fas fa-pencil-alt"></i></button>
+                  <button class="btn-del" (click)="eliminarCancion(c.id!)" title="Eliminar"><i class="fas fa-trash"></i></button>
                 </div>
               }
             </div>
@@ -539,9 +545,11 @@
               <div class="foto-actions">
                 <span>{{ foto.titulo }}</span>
                 <div class="foto-item-btns">
-                  <button class="btn-edit-sm" (click)="toggleVisible('fotos', foto)" [title]="foto.visible === false ? 'Mostrar' : 'Ocultar'">
-                    <i class="fas" [class.fa-eye]="foto.visible !== false" [class.fa-eye-slash]="foto.visible === false"></i>
+                  <button class="switch" [class.on]="foto.visible !== false" (click)="toggleVisible('fotos', foto)"
+                          [title]="foto.visible === false ? 'Oculto — clic para publicar' : 'Publicado — clic para ocultar'">
+                    <span class="switch-knob"></span>
                   </button>
+                  <button class="btn-edit-sm" (click)="abrirPreview('foto', foto)" title="Previsualizar"><i class="fas fa-eye"></i></button>
                   <button class="btn-edit-sm" (click)="editarFoto(foto); mostrarFormFoto.set(false)" title="Editar"><i class="fas fa-pencil-alt"></i></button>
                   <button class="btn-del-sm" (click)="eliminarFoto(foto.id!)" title="Eliminar"><i class="fas fa-trash"></i></button>
                 </div>
@@ -668,11 +676,13 @@
                   <span><i class="fas fa-calendar"></i> {{ p.desde | fechaLarga }} → {{ p.hasta | fechaLarga }}</span>
                 </div>
                 <div class="item-btns">
-                  <button class="btn-edit" (click)="togglePopupActivo(p)" [title]="p.activo ? 'Desactivar' : 'Activar'">
-                    <i class="fas" [class.fa-toggle-on]="p.activo" [class.fa-toggle-off]="!p.activo"></i>
+                  <button class="switch" [class.on]="p.activo" (click)="togglePopupActivo(p)"
+                          [title]="p.activo ? 'Activo — clic para desactivar' : 'Inactivo — clic para activar'">
+                    <span class="switch-knob"></span>
                   </button>
-                  <button class="btn-edit" (click)="editarPopup(p)"><i class="fas fa-pencil-alt"></i></button>
-                  <button class="btn-del" (click)="eliminarPopup(p.id!)"><i class="fas fa-trash"></i></button>
+                  <button class="btn-edit" (click)="abrirPreview('popup', p)" title="Previsualizar"><i class="fas fa-eye"></i></button>
+                  <button class="btn-edit" (click)="editarPopup(p)" title="Editar"><i class="fas fa-pencil-alt"></i></button>
+                  <button class="btn-del" (click)="eliminarPopup(p.id!)" title="Eliminar"><i class="fas fa-trash"></i></button>
                 </div>
               }
             </div>
@@ -842,3 +852,75 @@
     }
   </main>
 </div>
+
+<!-- VISTA PREVIA (cómo lo ve un visitante) -->
+@if (vistaPrevia(); as vp) {
+  <div class="preview-overlay" (click)="cerrarPreview()">
+    <div class="preview-card" (click)="$event.stopPropagation()">
+      <button class="preview-close" (click)="cerrarPreview()" aria-label="Cerrar"><i class="fas fa-times"></i></button>
+      <span class="preview-tag"><i class="fas fa-eye"></i> Vista previa</span>
+
+      @if (previewVideoUrl(); as vurl) {
+        <div class="preview-video"><iframe [src]="vurl" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
+      }
+
+      @switch (vp.tipo) {
+        @case ('foto') {
+          @if (!previewVideoUrl() && asFoto(vp.item).url) {
+            <img class="preview-img" [src]="asFoto(vp.item).url" [alt]="asFoto(vp.item).titulo" />
+          }
+          <div class="preview-body">
+            <span class="preview-cat">{{ asFoto(vp.item).categoria }}</span>
+            <h3>{{ asFoto(vp.item).titulo }}</h3>
+            @if (asFoto(vp.item).descripcion) { <p>{{ asFoto(vp.item).descripcion }}</p> }
+          </div>
+        }
+        @case ('tutorial') {
+          <div class="preview-body">
+            <span class="preview-cat">{{ asTutorial(vp.item).nivel }}</span>
+            <h3>{{ asTutorial(vp.item).titulo }}</h3>
+            @if (asTutorial(vp.item).instructor) { <p class="preview-meta">Instructor: {{ asTutorial(vp.item).instructor }}</p> }
+            <p>{{ asTutorial(vp.item).descripcion }}</p>
+          </div>
+        }
+        @case ('cancion') {
+          <div class="preview-body">
+            <span class="preview-cat">{{ asCancion(vp.item).genero }}</span>
+            <h3>{{ asCancion(vp.item).titulo }}</h3>
+            <p class="preview-meta">{{ asCancion(vp.item).artista }}</p>
+            @if (asCancion(vp.item).descripcion) { <p>{{ asCancion(vp.item).descripcion }}</p> }
+          </div>
+        }
+        @case ('evento') {
+          @if (asEvento(vp.item).imagen) {
+            <img class="preview-img" [src]="asEvento(vp.item).imagen" [alt]="asEvento(vp.item).titulo" />
+          }
+          <div class="preview-body">
+            <span class="preview-cat">{{ asEvento(vp.item).tipo }}</span>
+            <h3>{{ asEvento(vp.item).titulo }}</h3>
+            <p class="preview-meta">
+              <i class="fas fa-calendar"></i>
+              @for (o of ocurrenciasDe(asEvento(vp.item)); track o.fecha; let last = $last) {
+                {{ o.fecha | fechaLarga }}@if (o.hora) { · {{ o.hora }} hrs }@if (!last) { · }
+              }
+            </p>
+            @if (asEvento(vp.item).lugar) { <p class="preview-meta"><i class="fas fa-map-marker-alt"></i> {{ asEvento(vp.item).lugar }}</p> }
+            <p>{{ asEvento(vp.item).descripcion }}</p>
+          </div>
+        }
+        @case ('popup') {
+          @if (asPopup(vp.item).imagen) {
+            <img class="preview-img" [src]="asPopup(vp.item).imagen" [alt]="asPopup(vp.item).titulo" />
+          }
+          <div class="preview-body">
+            <h3>{{ asPopup(vp.item).titulo }}</h3>
+            <p>{{ asPopup(vp.item).mensaje }}</p>
+            @if (asPopup(vp.item).enlace) {
+              <span class="preview-btn">{{ asPopup(vp.item).textoEnlace || 'Ver más' }} <i class="fas fa-arrow-right"></i></span>
+            }
+          </div>
+        }
+      }
+    </div>
+  </div>
+}
