@@ -32,10 +32,12 @@ export class PopupComponent implements OnInit {
 
       const hoy = this.hoyIso();
       const cerrados = this.cerrados();
-      const candidato = lista.find(
-        (p) => p.activo && p.desde <= hoy && hoy <= p.hasta && !cerrados.has(p.id ?? ''),
-      );
-      this.actual.set(candidato ?? null);
+      const candidatos = lista
+        .filter((p) => p.activo && p.desde <= hoy && hoy <= p.hasta && !cerrados.has(p.id ?? ''))
+        // Prioridad: gana el de rango de fechas más corto (más específico);
+        // si empatan, el que empieza más tarde (más reciente).
+        .sort((a, b) => this.duracion(a) - this.duracion(b) || (a.desde < b.desde ? 1 : -1));
+      this.actual.set(candidatos[0] ?? null);
     });
   }
 
@@ -64,5 +66,12 @@ export class PopupComponent implements OnInit {
   private hoyIso(): string {
     const d = new Date();
     return partesAIso(d.getDate(), d.getMonth() + 1, d.getFullYear());
+  }
+
+  /** Duración del popup en milisegundos (rango desde→hasta). Menor = más específico = más prioridad. */
+  private duracion(p: Popup): number {
+    const a = Date.parse(p.desde);
+    const b = Date.parse(p.hasta);
+    return isNaN(a) || isNaN(b) ? Number.MAX_SAFE_INTEGER : b - a;
   }
 }

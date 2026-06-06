@@ -65,6 +65,7 @@
   .dash-nav-btn {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.65rem;
     padding: 0.75rem 1rem;
     background: none;
@@ -75,7 +76,7 @@
     font-weight: 500;
     cursor: pointer;
     transition: var(--transition);
-    text-align: left;
+    text-align: center;
 
     i { width: 18px; text-align: center; }
 
@@ -980,3 +981,8 @@ label small {
   from { opacity: 0; transform: translateY(16px) scale(0.97); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
+
+/* Centrar contenido de los botones del pie del sidebar */
+.dash-footer-btns .dash-link,
+.dash-footer-btns .dash-logout,
+.dash-footer-btns .dash-seed { justify-content: center; }
