@@ -1,65 +1,81 @@
 [
   {
-    "url": "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=600&q=80",
-    "titulo": "Festival Andino 2024",
-    "descripcion": "Gran presentación en el festival regional de folclore andino",
-    "fecha": "2024-08-15",
+    "url": "",
+    "youtubeId": "q2bMZj9r4EM",
+    "titulo": "Ganadores Carnaval 2025",
+    "descripcion": "Caporales Reales Brillantes, presentación premiada en el Carnaval Andino con la Fuerza del Sol",
+    "fecha": "2025-02-01",
+    "categoria": "carnaval"
+  },
+  {
+    "url": "",
+    "youtubeId": "ctbAzgd2UPs",
+    "titulo": "Reales Brillantes + Banda San Pedro",
+    "descripcion": "Bailando en la Fiesta del Sol 2022 en Valparaíso, acompañados por la banda San Pedro",
+    "fecha": "2022-02-12",
     "categoria": "presentaciones"
   },
   {
+    "url": "https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=600&q=80",
+    "titulo": "Carnaval con la Fuerza del Sol 2026",
+    "descripcion": "Representando a Valparaíso junto a la casa matriz Reales Brillantes Andinos en Arica",
+    "fecha": "2026-01-30",
+    "categoria": "carnaval"
+  },
+  {
     "url": "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600&q=80",
-    "titulo": "Fiestas Patrias 2024",
-    "descripcion": "Celebración dieciochera en la Plaza de Armas",
-    "fecha": "2024-09-18",
+    "titulo": "Pasacalle por los Cerros",
+    "descripcion": "Bloque de caporales bailando por el plan de Valparaíso con banda de bronces",
+    "fecha": "2025-11-15",
+    "categoria": "presentaciones"
+  },
+  {
+    "url": "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=600&q=80",
+    "titulo": "Fiestas Patrias 2025",
+    "descripcion": "Saltos y cascabeles en la celebración dieciochera del puerto",
+    "fecha": "2025-09-18",
     "categoria": "presentaciones"
   },
   {
     "url": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&q=80",
-    "titulo": "Ensayo General",
-    "descripcion": "Preparando la coreografía para el festival",
-    "fecha": "2024-07-20",
+    "titulo": "Ensayo de Bloque",
+    "descripcion": "Afinando la coreografía caporal para la próxima temporada",
+    "fecha": "2025-08-20",
     "categoria": "ensayos"
   },
   {
     "url": "https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=600&q=80",
-    "titulo": "Vestuario Andino",
-    "descripcion": "Detalle de nuestros trajes típicos",
-    "fecha": "2024-06-10",
+    "titulo": "Trajes de Caporal",
+    "descripcion": "Detalle de los trajes bordados, botas y cascabeles de nuestros caporales",
+    "fecha": "2025-07-10",
     "categoria": "vestuario"
   },
   {
-    "url": "https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=600&q=80",
-    "titulo": "Carnaval de Valparaíso",
-    "descripcion": "Participación en el carnaval cultural de Valparaíso",
-    "fecha": "2024-05-05",
-    "categoria": "presentaciones"
-  },
-  {
     "url": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=80",
-    "titulo": "Taller de Música Andina",
-    "descripcion": "Aprendiendo zampoña y quena",
-    "fecha": "2024-04-12",
-    "categoria": "ensayos"
+    "titulo": "Polleras de las Cholitas",
+    "descripcion": "El color y el brillo de las polleras de nuestras cholitas caporales",
+    "fecha": "2025-06-12",
+    "categoria": "vestuario"
   },
   {
     "url": "https://images.unsplash.com/photo-1560472355-536de3962603?w=600&q=80",
-    "titulo": "Encuentro Regional",
-    "descripcion": "Encuentro con otras agrupaciones de la región",
-    "fecha": "2024-03-22",
+    "titulo": "Encuentro de Fraternidades",
+    "descripcion": "Compartiendo bloque y banda con otras fraternidades de caporales de la región",
+    "fecha": "2025-05-22",
     "categoria": "eventos"
   },
   {
     "url": "https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=600&q=80",
-    "titulo": "Aniversario RBV",
-    "descripcion": "Celebración del aniversario de la agrupación",
-    "fecha": "2024-02-14",
+    "titulo": "Aniversario de la Fraternidad",
+    "descripcion": "Velada de aniversario y entrega de pasantes de Reales Brillantes Valparaíso",
+    "fecha": "2024-11-22",
     "categoria": "eventos"
   },
   {
     "url": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&q=80",
-    "titulo": "Tocata Navideña",
-    "descripcion": "Presentación navideña para la comunidad",
-    "fecha": "2023-12-18",
+    "titulo": "Banda de Bronces",
+    "descripcion": "La banda que pone el ritmo a cada salto del caporal",
+    "fecha": "2024-10-05",
     "categoria": "presentaciones"
   }
 ]

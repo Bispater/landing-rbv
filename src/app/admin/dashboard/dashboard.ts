@@ -3,14 +3,28 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
-import { DataService, Evento, Tutorial, Cancion, Foto } from '../../core/services/data.service';
+import {
+  DataService,
+  Evento,
+  Tutorial,
+  Cancion,
+  Foto,
+  Popup,
+  Contenido,
+  DEFAULT_CONTENIDO,
+  youtubeThumb,
+  ocurrenciasEvento,
+} from '../../core/services/data.service';
+import { SeedService } from '../../core/services/seed.service';
+import { FechaInputComponent } from '../../shared/fecha-input/fecha-input';
+import { FechaLargaPipe } from '../../core/util/fecha.pipe';
 
-type Section = 'eventos' | 'tutoriales' | 'playlist' | 'fotos';
+type Section = 'eventos' | 'tutoriales' | 'playlist' | 'fotos' | 'popups' | 'contenido';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, FechaInputComponent, FechaLargaPipe],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -20,48 +34,129 @@ export class DashboardComponent implements OnInit {
   tutoriales = signal<Tutorial[]>([]);
   playlist = signal<Cancion[]>([]);
   fotos = signal<Foto[]>([]);
+  popups = signal<Popup[]>([]);
 
   nuevoEvento: Partial<Evento> = this.emptyEvento();
   nuevoTutorial: Partial<Tutorial> = this.emptyTutorial();
   nuevaCancion: Partial<Cancion> = this.emptyCancion();
   nuevaFoto: Partial<Foto> = this.emptyFoto();
+  nuevoPopup: Partial<Popup> = this.emptyPopup();
 
   editandoEvento = signal<Evento | null>(null);
   editandoTutorial = signal<Tutorial | null>(null);
   editandoCancion = signal<Cancion | null>(null);
   editandoFoto = signal<Foto | null>(null);
+  editandoPopup = signal<Popup | null>(null);
 
   mostrarFormEvento = signal(false);
   mostrarFormTutorial = signal(false);
   mostrarFormCancion = signal(false);
   mostrarFormFoto = signal(false);
+  mostrarFormPopup = signal(false);
+
+  ocurrenciasDe = ocurrenciasEvento;
 
   guardando = signal(false);
   mensaje = signal('');
+  sembrando = signal(false);
+  subiendoFoto = signal(false);
 
-  constructor(protected auth: AuthService, private data: DataService, private router: Router) {}
+  // Editable site content (hero/about/contact). Starts from defaults until RTDB loads.
+  contenido = signal<Contenido>(structuredClone(DEFAULT_CONTENIDO));
+
+  constructor(
+    protected auth: AuthService,
+    private data: DataService,
+    private seed: SeedService,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
-    this.data.listenToRef<Record<string, Evento>>('eventos', (val) => {
-      this.eventos.set(val ? Object.entries(val).map(([id, v]) => ({ ...v, id })) : []);
-    });
-    this.data.listenToRef<Record<string, Tutorial>>('tutoriales', (val) => {
-      this.tutoriales.set(val ? Object.entries(val).map(([id, v]) => ({ ...v, id })) : []);
-    });
-    this.data.listenToRef<Record<string, Cancion>>('playlist', (val) => {
-      this.playlist.set(val ? Object.entries(val).map(([id, v]) => ({ ...v, id })) : []);
-    });
-    this.data.listenToRef<Record<string, Foto>>('fotos', (val) => {
-      this.fotos.set(val ? Object.entries(val).map(([id, v]) => ({ ...v, id })) : []);
+    this.data.listenToList<Evento>('eventos', (v) => this.eventos.set(v));
+    this.data.listenToList<Tutorial>('tutoriales', (v) => this.tutoriales.set(v));
+    this.data.listenToList<Cancion>('playlist', (v) => this.playlist.set(v));
+    this.data.listenToList<Foto>('fotos', (v) => this.fotos.set(v));
+    this.data.listenToList<Popup>('popups', (v) => this.popups.set(v));
+    this.data.listenToRef<Contenido>('contenido', (val) => {
+      if (val) this.contenido.set({ ...structuredClone(DEFAULT_CONTENIDO), ...val });
     });
   }
 
   setSeccion(s: Section): void { this.seccionActiva.set(s); }
 
-  async agregarEvento(): Promise<void> {
-    if (!this.nuevoEvento.titulo || !this.nuevoEvento.fecha) return;
+  /** Image to display for a gallery item in the dashboard (YouTube thumbnail or photo url). */
+  fotoThumb(foto: Foto): string {
+    return foto.youtubeId ? youtubeThumb(foto.youtubeId) : foto.url;
+  }
+
+  async sembrarDatos(): Promise<void> {
+    if (!confirm('Esto reemplazará TODO el contenido actual con los datos de ejemplo. ¿Continuar?')) return;
+    this.sembrando.set(true);
+    try {
+      await this.seed.seedAll();
+      this.mostrarMensaje('Datos de ejemplo cargados correctamente');
+    } catch {
+      this.mostrarMensaje('Error al cargar los datos de ejemplo');
+    } finally {
+      this.sembrando.set(false);
+    }
+  }
+
+  /** Uploads a chosen file to Cloudinary and writes the resulting URL into the target foto object. */
+  async subirImagen(event: Event, target: Partial<Foto>): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.subiendoFoto.set(true);
+    try {
+      target.url = await this.data.uploadImage(file);
+      this.mostrarMensaje('Imagen subida correctamente');
+    } catch (e) {
+      this.mostrarMensaje(e instanceof Error ? e.message : 'Error al subir la imagen');
+    } finally {
+      this.subiendoFoto.set(false);
+      input.value = '';
+    }
+  }
+
+  async guardarContenido(): Promise<void> {
     this.guardando.set(true);
-    await this.data.addItem('eventos', this.nuevoEvento);
+    await this.data.setItem('contenido', this.contenido());
+    this.mostrarMensaje('Contenido del sitio actualizado');
+  }
+
+  addFrase(): void { this.contenido().hero.frases.push(''); }
+  removeFrase(i: number): void { this.contenido().hero.frases.splice(i, 1); }
+  addStat(): void { this.contenido().hero.stats.push({ num: '', label: '' }); }
+  removeStat(i: number): void { this.contenido().hero.stats.splice(i, 1); }
+  addParrafo(): void { this.contenido().about.parrafos.push(''); }
+  removeParrafo(i: number): void { this.contenido().about.parrafos.splice(i, 1); }
+
+  // ---- Fechas múltiples (1 a 4), cada una con su hora ----
+  agregarFecha(target: Partial<Evento>): void {
+    if (!target.fechas) target.fechas = [];
+    if (target.fechas.length < 4) target.fechas.push({ fecha: '', hora: '' });
+  }
+  quitarFecha(target: Partial<Evento>, i: number): void {
+    target.fechas?.splice(i, 1);
+    if (target.fechas && target.fechas.length === 0) target.fechas.push({ fecha: '', hora: '' });
+  }
+  /** Normaliza ocurrencias: quita las sin fecha, ordena y fija `fecha` = la más próxima. null si inválido. */
+  private prepararEvento(ev: Partial<Evento>): Partial<Evento> | null {
+    const fechas = (ev.fechas ?? [])
+      .filter((o) => o && o.fecha)
+      .map((o) => ({ fecha: o.fecha, hora: o.hora ?? '' }))
+      .sort((a, b) => a.fecha.localeCompare(b.fecha));
+    if (!ev.titulo || fechas.length === 0) return null;
+    const { hora, ...resto } = ev;
+    return { ...resto, fechas, fecha: fechas[0].fecha };
+  }
+
+  async agregarEvento(): Promise<void> {
+    const data = this.prepararEvento(this.nuevoEvento);
+    if (!data) { this.mostrarMensaje('Agrega un título y al menos una fecha'); return; }
+    this.guardando.set(true);
+    await this.data.addItem('eventos', data);
     this.nuevoEvento = this.emptyEvento();
     this.mostrarMensaje('Evento agregado correctamente');
   }
@@ -74,14 +169,18 @@ export class DashboardComponent implements OnInit {
   }
 
   editarEvento(ev: Evento): void {
-    this.editandoEvento.set({ ...ev });
+    // Normaliza a ocurrencias {fecha,hora} (tolera eventos antiguos con `fecha`/`fechas` string).
+    const fechas = ocurrenciasEvento(ev);
+    this.editandoEvento.set({ ...ev, fechas: fechas.length ? fechas : [{ fecha: '', hora: '' }] });
   }
 
   async guardarEdicionEvento(): Promise<void> {
     const ev = this.editandoEvento();
     if (!ev?.id) return;
+    const prepared = this.prepararEvento(ev);
+    if (!prepared) { this.mostrarMensaje('Agrega un título y al menos una fecha'); return; }
     this.guardando.set(true);
-    const { id, ...data } = ev;
+    const { id, ...data } = prepared as Evento;
     await this.data.updateItem(`eventos/${id}`, data);
     this.editandoEvento.set(null);
     this.mostrarMensaje('Evento actualizado');
@@ -146,7 +245,7 @@ export class DashboardComponent implements OnInit {
   }
 
   async agregarFoto(): Promise<void> {
-    if (!this.nuevaFoto.url || !this.nuevaFoto.titulo) return;
+    if (!this.nuevaFoto.titulo || (!this.nuevaFoto.url && !this.nuevaFoto.youtubeId)) return;
     this.guardando.set(true);
     await this.data.addItem('fotos', this.nuevaFoto);
     this.nuevaFoto = this.emptyFoto();
@@ -174,6 +273,46 @@ export class DashboardComponent implements OnInit {
     this.mostrarMensaje('Foto actualizada');
   }
 
+  // ---- Popups programados ----
+  async agregarPopup(): Promise<void> {
+    const p = this.nuevoPopup;
+    if (!p.titulo || !p.mensaje || !p.desde || !p.hasta) {
+      this.mostrarMensaje('Completa título, mensaje y el rango de fechas');
+      return;
+    }
+    this.guardando.set(true);
+    await this.data.addItem('popups', p);
+    this.nuevoPopup = this.emptyPopup();
+    this.mostrarFormPopup.set(false);
+    this.mostrarMensaje('Popup creado correctamente');
+  }
+
+  async eliminarPopup(id: string): Promise<void> {
+    if (confirm('¿Eliminar este popup?')) {
+      await this.data.deleteItem(`popups/${id}`);
+      this.mostrarMensaje('Popup eliminado');
+    }
+  }
+
+  editarPopup(p: Popup): void {
+    this.editandoPopup.set({ ...p });
+  }
+
+  async guardarEdicionPopup(): Promise<void> {
+    const p = this.editandoPopup();
+    if (!p?.id) return;
+    this.guardando.set(true);
+    const { id, ...data } = p;
+    await this.data.updateItem(`popups/${id}`, data);
+    this.editandoPopup.set(null);
+    this.mostrarMensaje('Popup actualizado');
+  }
+
+  async togglePopupActivo(p: Popup): Promise<void> {
+    if (!p.id) return;
+    await this.data.updateItem(`popups/${p.id}`, { activo: !p.activo });
+  }
+
   async cerrarSesion(): Promise<void> {
     await this.auth.logout();
     this.router.navigate(['/admin/login']);
@@ -186,7 +325,10 @@ export class DashboardComponent implements OnInit {
   }
 
   private emptyEvento(): Partial<Evento> {
-    return { titulo: '', descripcion: '', fecha: '', hora: '', lugar: '', tipo: 'evento' };
+    return { titulo: '', descripcion: '', fecha: '', fechas: [{ fecha: '', hora: '' }], lugar: '', tipo: 'evento' };
+  }
+  private emptyPopup(): Partial<Popup> {
+    return { titulo: '', mensaje: '', imagen: '', enlace: '', textoEnlace: '', desde: '', hasta: '', activo: true };
   }
   private emptyTutorial(): Partial<Tutorial> {
     return { titulo: '', descripcion: '', youtubeId: '', nivel: 'principiante', instructor: '' };
@@ -195,6 +337,6 @@ export class DashboardComponent implements OnInit {
     return { titulo: '', artista: '', genero: '', youtubeId: '', duracion: '' };
   }
   private emptyFoto(): Partial<Foto> {
-    return { url: '', titulo: '', descripcion: '', fecha: '', categoria: 'general' };
+    return { url: '', youtubeId: '', titulo: '', descripcion: '', fecha: '', categoria: 'general' };
   }
 }

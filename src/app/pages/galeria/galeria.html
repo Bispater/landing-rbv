@@ -17,12 +17,13 @@
     </div>
 
     <div class="gallery-grid">
-      @for (foto of fotosFiltradas; track foto.url) {
+      @for (foto of fotosFiltradas; track foto.id || foto.url) {
         <div class="gallery-item card" (click)="abrirFoto(foto)">
-          <div class="gallery-img" [style.background-image]="'url(' + foto.url + ')'">
+          <div class="gallery-img" [style.background-image]="'url(' + imagenDe(foto) + ')'">
             <div class="gallery-overlay">
-              <i class="fas fa-expand-alt"></i>
+              <i class="fas" [class.fa-expand-alt]="!foto.youtubeId" [class.fa-play]="foto.youtubeId"></i>
             </div>
+            @if (foto.youtubeId) { <span class="gallery-play"><i class="fab fa-youtube"></i></span> }
             <span class="gallery-cat">{{ foto.categoria }}</span>
           </div>
           <div class="gallery-info">
@@ -48,7 +49,13 @@
   <div class="lightbox" (click)="cerrarFoto()">
     <div class="lightbox-content" (click)="$event.stopPropagation()">
       <button class="lightbox-close" (click)="cerrarFoto()"><i class="fas fa-times"></i></button>
-      <img [src]="fotoAmpliada()!.url" [alt]="fotoAmpliada()!.titulo" />
+      @if (videoUrl()) {
+        <div class="lightbox-video">
+          <iframe [src]="videoUrl()" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+      } @else {
+        <img [src]="fotoAmpliada()!.url" [alt]="fotoAmpliada()!.titulo" />
+      }
       <div class="lightbox-caption">
         <h3>{{ fotoAmpliada()!.titulo }}</h3>
         @if (fotoAmpliada()!.descripcion) {

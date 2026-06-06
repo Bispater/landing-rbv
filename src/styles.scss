@@ -259,6 +259,24 @@ button {
   }
 }
 
+/* ---- Fechas (formato es) ---- */
+.fecha-sep {
+  margin: 0 0.15rem;
+  opacity: 0.6;
+  font-style: italic;
+}
+.event-fechas, .pres-fechas {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0.35rem 0 0.6rem;
+  i { color: var(--color-primary-light); }
+}
+
 /* ---- Responsive helpers ---- */
 @media (max-width: 768px) {
   .section { padding: 3rem 0; }

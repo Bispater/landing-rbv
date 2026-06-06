@@ -50,17 +50,20 @@
           @for (evento of eventosFiltrados; track evento.titulo) {
             <div class="event-item" [class]="'event-item--' + evento.tipo">
               <div class="event-item-date">
-                <span class="day">{{ evento.fecha | slice:8:10 }}</span>
-                <span class="month">{{ getMes(evento.fecha) }}</span>
+                <span class="day">{{ fechaPrincipal(evento) | slice:8:10 }}</span>
+                <span class="month">{{ getMes(fechaPrincipal(evento)) }}</span>
               </div>
               <div class="event-item-content">
                 <div class="event-item-top">
                   <span class="tipo-badge">{{ getTipoLabel(evento.tipo) }}</span>
-                  @if (evento.hora) {
-                    <span class="hora"><i class="fas fa-clock"></i> {{ evento.hora }}</span>
-                  }
                 </div>
                 <h3>{{ evento.titulo }}</h3>
+                <div class="event-fechas">
+                  <i class="fas fa-calendar"></i>
+                  @for (o of ocurrenciasDe(evento); track o.fecha; let last = $last) {
+                    {{ o.fecha | fechaLarga }}@if (o.hora) { · {{ o.hora }} hrs }@if (!last) { <span class="fecha-sep">y</span> }
+                  }
+                </div>
                 <p>{{ evento.descripcion }}</p>
                 @if (evento.lugar) {
                   <div class="lugar"><i class="fas fa-map-marker-alt"></i> {{ evento.lugar }}</div>

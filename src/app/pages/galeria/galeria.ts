@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Foto } from '../../core/services/data.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Foto, DataService, youtubeThumb } from '../../core/services/data.service';
 
 @Component({
   selector: 'app-galeria',
@@ -15,11 +15,12 @@ export class GaleriaComponent implements OnInit {
   categorias = signal<string[]>([]);
   filtroActivo = signal('todas');
   fotoAmpliada = signal<Foto | null>(null);
+  videoUrl = signal<SafeResourceUrl | null>(null);
 
-  constructor(private http: HttpClient) {}
+  constructor(private data: DataService, private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
-    this.http.get<Foto[]>('assets/data/photos.json').subscribe((data) => {
+    this.data.listenToList<Foto>('fotos', (data) => {
       this.fotos.set(data);
       const cats = ['todas', ...new Set(data.map((f) => f.categoria))];
       this.categorias.set(cats);
@@ -31,17 +32,29 @@ export class GaleriaComponent implements OnInit {
     return this.fotos().filter((f) => f.categoria === this.filtroActivo());
   }
 
+  /** Image to show for a gallery item: the YouTube thumbnail when it's a video, else the photo url. */
+  imagenDe(foto: Foto): string {
+    return foto.youtubeId ? youtubeThumb(foto.youtubeId) : foto.url;
+  }
+
   setFiltro(cat: string): void {
     this.filtroActivo.set(cat);
   }
 
   abrirFoto(foto: Foto): void {
     this.fotoAmpliada.set(foto);
+    if (foto.youtubeId) {
+      const url = `https://www.youtube.com/embed/${foto.youtubeId}?autoplay=1`;
+      this.videoUrl.set(this.sanitizer.bypassSecurityTrustResourceUrl(url));
+    } else {
+      this.videoUrl.set(null);
+    }
     document.body.style.overflow = 'hidden';
   }
 
   cerrarFoto(): void {
     this.fotoAmpliada.set(null);
+    this.videoUrl.set(null);
     document.body.style.overflow = '';
   }
 }

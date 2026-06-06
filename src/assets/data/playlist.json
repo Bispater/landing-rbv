@@ -1,43 +1,19 @@
 [
   {
-    "titulo": "Llorando se fue",
-    "artista": "Los Kjarkas",
-    "genero": "Huayno",
-    "youtubeId": "R3hFVvO0NKA",
-    "duracion": "4:05",
-    "descripcion": "Clásico boliviano de Los Kjarkas, base de la Lambada"
+    "titulo": "Caporales San Simón",
+    "artista": "Banda Espectacular",
+    "genero": "Caporales",
+    "youtubeId": "ktvTqknDobU",
+    "duracion": "4:45",
+    "descripcion": "Caporal clásico para entrar al bloque con toda la fuerza"
   },
   {
-    "titulo": "Imillitay",
-    "artista": "Los Kjarkas",
-    "genero": "Huayno",
+    "titulo": "Salto del Caporal",
+    "artista": "Banda Poopó",
+    "genero": "Caporales",
     "youtubeId": "cegFxbBpZGE",
-    "duracion": "3:48",
-    "descripcion": "Canción tradicional andina"
-  },
-  {
-    "titulo": "El Condor Pasa",
-    "artista": "Tradicional Andina",
-    "genero": "Yaraví",
-    "youtubeId": "NLkDFtcJBH0",
-    "duracion": "3:20",
-    "descripcion": "Melodía tradicional andina del siglo XIX"
-  },
-  {
-    "titulo": "Fiesta de San Juan",
-    "artista": "Proyección",
-    "genero": "Cueca Andina",
-    "youtubeId": "9bZkp7q19f0",
-    "duracion": "3:55",
-    "descripcion": "Ritmo festivo de celebración"
-  },
-  {
-    "titulo": "Tinkus",
-    "artista": "Boliviamanta",
-    "genero": "Tinkus",
-    "youtubeId": "QqOK8iLSfy8",
     "duracion": "4:12",
-    "descripcion": "Danza ritual andina de encuentro"
+    "descripcion": "Ritmo de ensayo para trabajar saltos y cascabeles"
   },
   {
     "titulo": "Morenada Central",
@@ -45,15 +21,7 @@
     "genero": "Morenada",
     "youtubeId": "dQw4w9WgXcQ",
     "duracion": "5:30",
-    "descripcion": "Danza característica del altiplano"
-  },
-  {
-    "titulo": "Caporales",
-    "artista": "Banda Andina",
-    "genero": "Caporales",
-    "youtubeId": "ktvTqknDobU",
-    "duracion": "4:45",
-    "descripcion": "Danza energética de los Yungas bolivianos"
+    "descripcion": "El paso pesado de la morenada del altiplano"
   },
   {
     "titulo": "Saya Afroboliviana",
@@ -61,6 +29,38 @@
     "genero": "Saya",
     "youtubeId": "3tmd-ClpJxA",
     "duracion": "3:30",
-    "descripcion": "Expresión cultural afroboliviana"
+    "descripcion": "Raíz afroboliviana que dio origen al caporal"
+  },
+  {
+    "titulo": "Tinkus de Encuentro",
+    "artista": "Boliviamanta",
+    "genero": "Tinkus",
+    "youtubeId": "QqOK8iLSfy8",
+    "duracion": "4:12",
+    "descripcion": "Danza ritual andina de encuentro y fuerza"
+  },
+  {
+    "titulo": "Llorando se fue",
+    "artista": "Los Kjarkas",
+    "genero": "Saya",
+    "youtubeId": "R3hFVvO0NKA",
+    "duracion": "4:05",
+    "descripcion": "Clásico de Los Kjarkas, raíz de la saya y el caporal"
+  },
+  {
+    "titulo": "Imillitay",
+    "artista": "Los Kjarkas",
+    "genero": "Huayno",
+    "youtubeId": "cegFxbBpZGE",
+    "duracion": "3:48",
+    "descripcion": "Canción tradicional andina para los descansos del ensayo"
+  },
+  {
+    "titulo": "El Cóndor Pasa",
+    "artista": "Tradicional Andina",
+    "genero": "Yaraví",
+    "youtubeId": "NLkDFtcJBH0",
+    "duracion": "3:20",
+    "descripcion": "Melodía tradicional andina del siglo XIX"
   }
 ]

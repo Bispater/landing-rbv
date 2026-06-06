@@ -1,7 +1,8 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, NgZone } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { DataService, Evento } from '../../core/services/data.service';
+import { DataService, Evento, Contenido, DEFAULT_CONTENIDO, ocurrenciasEvento, fechaPrincipal } from '../../core/services/data.service';
+import { FechaLargaPipe } from '../../core/util/fecha.pipe';
 
 declare global {
   interface Window {
@@ -15,12 +16,23 @@ interface YTPlayer { playVideo(): void; seekTo(s: number, a: boolean): void; get
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, FechaLargaPipe],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   proximosEventos: Evento[] = [];
+  ocurrenciasDe = ocurrenciasEvento;
+
+  // Editable site content (hero/about/contact); starts from defaults until RTDB loads.
+  contenido: Contenido = structuredClone(DEFAULT_CONTENIDO);
+
+  // Rotating tagline shown under the hero title (fades between phrases)
+  get frases(): string[] { return this.contenido.hero.frases; }
+  fraseActual = 0;
+  fraseVisible = true;
+  private fraseInterval: ReturnType<typeof setInterval> | null = null;
+
   private ytPlayer: YTPlayer | null = null;
   private loopInterval: ReturnType<typeof setInterval> | null = null;
   private readonly CLIP_END = 8;
@@ -31,9 +43,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.data.listenToRef<Record<string, Evento>>('eventos', (val) => {
       const all = val ? Object.entries(val).map(([id, v]) => ({ ...v, id })) : [];
       this.proximosEventos = all
-        .sort((a, b) => (a.fecha > b.fecha ? 1 : -1))
+        .sort((a, b) => (fechaPrincipal(a) > fechaPrincipal(b) ? 1 : -1))
         .slice(0, 3);
     });
+
+    this.data.listenToRef<Contenido>('contenido', (val) => {
+      if (val) this.contenido = { ...structuredClone(DEFAULT_CONTENIDO), ...val };
+    });
+
+    this.fraseInterval = setInterval(() => {
+      this.fraseVisible = false;
+      setTimeout(() => {
+        const n = this.frases.length || 1;
+        this.fraseActual = (this.fraseActual + 1) % n;
+        this.fraseVisible = true;
+      }, 500);
+    }, 3000);
   }
 
   ngAfterViewInit(): void {
@@ -113,5 +138,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.loopInterval) clearInterval(this.loopInterval);
+    if (this.fraseInterval) clearInterval(this.fraseInterval);
   }
 }

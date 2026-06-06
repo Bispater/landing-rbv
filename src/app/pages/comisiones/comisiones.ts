@@ -1,7 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Comision } from '../../core/services/data.service';
+import { Comision, DataService } from '../../core/services/data.service';
 
 @Component({
   selector: 'app-comisiones',
@@ -14,10 +13,10 @@ export class ComisionesComponent implements OnInit {
   comisiones = signal<Comision[]>([]);
   activa = signal<number>(0);
 
-  constructor(private http: HttpClient) {}
+  constructor(private data: DataService) {}
 
   ngOnInit(): void {
-    this.http.get<Comision[]>('assets/data/comisiones.json').subscribe((data) => {
+    this.data.listenToList<Comision>('comisiones', (data) => {
       this.comisiones.set(data);
     });
   }

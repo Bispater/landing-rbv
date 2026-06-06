@@ -25,9 +25,21 @@
               (click)="setSeccion('fotos')">
         <i class="fas fa-images"></i> Fotos
       </button>
+      <button class="dash-nav-btn" [class.active]="seccionActiva() === 'popups'"
+              (click)="setSeccion('popups')">
+        <i class="fas fa-bell"></i> Popups
+      </button>
+      <button class="dash-nav-btn" [class.active]="seccionActiva() === 'contenido'"
+              (click)="setSeccion('contenido')">
+        <i class="fas fa-sliders-h"></i> Contenido
+      </button>
     </nav>
 
     <div class="dash-footer-btns">
+      <button class="dash-seed" (click)="sembrarDatos()" [disabled]="sembrando()" title="Reemplaza todo con datos de ejemplo">
+        <i class="fas" [class.fa-database]="!sembrando()" [class.fa-spinner]="sembrando()" [class.fa-spin]="sembrando()"></i>
+        {{ sembrando() ? 'Cargando...' : 'Cargar datos de ejemplo' }}
+      </button>
       <a routerLink="/" class="dash-link"><i class="fas fa-globe"></i> Ver Sitio</a>
       <button class="dash-logout" (click)="cerrarSesion()">
         <i class="fas fa-sign-out-alt"></i> Salir
@@ -54,29 +66,32 @@
         @if (mostrarFormEvento()) {
           <div class="dash-form card">
             <h3>Nuevo Evento</h3>
-            <div class="form-row">
-              <div class="form-group">
-                <label>Título *</label>
-                <input type="text" [(ngModel)]="nuevoEvento.titulo" placeholder="Nombre del evento" />
-              </div>
-              <div class="form-group">
-                <label>Fecha *</label>
-                <input type="date" [(ngModel)]="nuevoEvento.fecha" />
-              </div>
+            <div class="form-group">
+              <label>Título *</label>
+              <input type="text" [(ngModel)]="nuevoEvento.titulo" placeholder="Nombre del evento" />
             </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>Hora</label>
-                <input type="time" [(ngModel)]="nuevoEvento.hora" />
-              </div>
-              <div class="form-group">
-                <label>Tipo</label>
-                <select [(ngModel)]="nuevoEvento.tipo">
-                  <option value="evento">Evento</option>
-                  <option value="presentacion">Presentación</option>
-                  <option value="ensayo">Ensayo</option>
-                </select>
-              </div>
+            <div class="form-group">
+              <label>Fechas y horas * <small>(una o varias, hasta 4 — cada fecha con su hora)</small></label>
+              @for (f of nuevoEvento.fechas; track $index) {
+                <div class="fecha-row">
+                  <app-fecha-input [(ngModel)]="nuevoEvento.fechas![$index].fecha" [ngModelOptions]="{ standalone: true }"></app-fecha-input>
+                  <input type="time" class="hora-input" [(ngModel)]="nuevoEvento.fechas![$index].hora" [ngModelOptions]="{ standalone: true }" />
+                  @if (nuevoEvento.fechas!.length > 1) {
+                    <button class="btn-del-sm" (click)="quitarFecha(nuevoEvento, $index)" title="Quitar fecha"><i class="fas fa-trash"></i></button>
+                  }
+                </div>
+              }
+              @if (nuevoEvento.fechas!.length < 4) {
+                <button class="btn-mini" (click)="agregarFecha(nuevoEvento)"><i class="fas fa-plus"></i> Agregar otra fecha</button>
+              }
+            </div>
+            <div class="form-group">
+              <label>Tipo</label>
+              <select [(ngModel)]="nuevoEvento.tipo">
+                <option value="evento">Evento</option>
+                <option value="presentacion">Presentación</option>
+                <option value="ensayo">Ensayo</option>
+              </select>
             </div>
             <div class="form-group">
               <label>Lugar</label>
@@ -101,29 +116,32 @@
             <div class="dash-item" [class.editing]="editandoEvento()?.id === ev.id">
               @if (editandoEvento()?.id === ev.id) {
                 <div class="dash-edit-form">
-                  <div class="form-row">
-                    <div class="form-group">
-                      <label>Título</label>
-                      <input type="text" [(ngModel)]="editandoEvento()!.titulo" />
-                    </div>
-                    <div class="form-group">
-                      <label>Fecha</label>
-                      <input type="date" [(ngModel)]="editandoEvento()!.fecha" />
-                    </div>
+                  <div class="form-group">
+                    <label>Título</label>
+                    <input type="text" [(ngModel)]="editandoEvento()!.titulo" />
                   </div>
-                  <div class="form-row">
-                    <div class="form-group">
-                      <label>Hora</label>
-                      <input type="time" [(ngModel)]="editandoEvento()!.hora" />
-                    </div>
-                    <div class="form-group">
-                      <label>Tipo</label>
-                      <select [(ngModel)]="editandoEvento()!.tipo">
-                        <option value="evento">Evento</option>
-                        <option value="presentacion">Presentación</option>
-                        <option value="ensayo">Ensayo</option>
-                      </select>
-                    </div>
+                  <div class="form-group">
+                    <label>Fechas y horas <small>(hasta 4 — cada fecha con su hora)</small></label>
+                    @for (f of editandoEvento()!.fechas; track $index) {
+                      <div class="fecha-row">
+                        <app-fecha-input [(ngModel)]="editandoEvento()!.fechas![$index].fecha" [ngModelOptions]="{ standalone: true }"></app-fecha-input>
+                        <input type="time" class="hora-input" [(ngModel)]="editandoEvento()!.fechas![$index].hora" [ngModelOptions]="{ standalone: true }" />
+                        @if (editandoEvento()!.fechas!.length > 1) {
+                          <button class="btn-del-sm" (click)="quitarFecha(editandoEvento()!, $index)" title="Quitar fecha"><i class="fas fa-trash"></i></button>
+                        }
+                      </div>
+                    }
+                    @if (editandoEvento()!.fechas!.length < 4) {
+                      <button class="btn-mini" (click)="agregarFecha(editandoEvento()!)"><i class="fas fa-plus"></i> Agregar otra fecha</button>
+                    }
+                  </div>
+                  <div class="form-group">
+                    <label>Tipo</label>
+                    <select [(ngModel)]="editandoEvento()!.tipo">
+                      <option value="evento">Evento</option>
+                      <option value="presentacion">Presentación</option>
+                      <option value="ensayo">Ensayo</option>
+                    </select>
                   </div>
                   <div class="form-group">
                     <label>Lugar</label>
@@ -150,7 +168,11 @@
                 <div class="dash-item-info">
                   <span class="dash-item-badge">{{ ev.tipo }}</span>
                   <strong>{{ ev.titulo }}</strong>
-                  <span>{{ ev.fecha }}{{ ev.hora ? ' · ' + ev.hora : '' }}</span>
+                  <span>
+                    @for (o of ocurrenciasDe(ev); track o.fecha; let last = $last) {
+                      {{ o.fecha | fechaLarga }}@if (o.hora) { · {{ o.hora }} hrs }@if (!last) { <span class="fecha-sep">y</span> }
+                    }
+                  </span>
                   @if (ev.lugar) { <span class="item-place"><i class="fas fa-map-marker-alt"></i> {{ ev.lugar }}</span> }
                 </div>
                 <div class="item-btns">
@@ -412,8 +434,17 @@
               </div>
             </div>
             <div class="form-group">
-              <label>URL de la Imagen *</label>
+              <label>Subir imagen <small>(o pega una URL abajo)</small></label>
+              <input type="file" accept="image/*" (change)="subirImagen($event, nuevaFoto)" [disabled]="subiendoFoto()" />
+              @if (subiendoFoto()) { <span class="upload-hint"><i class="fas fa-spinner fa-spin"></i> Subiendo...</span> }
+            </div>
+            <div class="form-group">
+              <label>URL de la Imagen</label>
               <input type="url" [(ngModel)]="nuevaFoto.url" placeholder="https://..." />
+            </div>
+            <div class="form-group">
+              <label>YouTube ID <small>(opcional — convierte la publicación en video)</small></label>
+              <input type="text" [(ngModel)]="nuevaFoto.youtubeId" placeholder="ej: ctbAzgd2UPs" />
             </div>
             <div class="form-group">
               <label>Descripción</label>
@@ -423,12 +454,12 @@
               <label>Fecha</label>
               <input type="date" [(ngModel)]="nuevaFoto.fecha" />
             </div>
-            @if (nuevaFoto.url) {
+            @if (nuevaFoto.youtubeId || nuevaFoto.url) {
               <div class="img-preview">
-                <img [src]="nuevaFoto.url" alt="Vista previa" (error)="nuevaFoto.url = ''" />
+                <img [src]="nuevaFoto.youtubeId ? 'https://img.youtube.com/vi/' + nuevaFoto.youtubeId + '/hqdefault.jpg' : nuevaFoto.url" alt="Vista previa" />
               </div>
             }
-            <button class="btn-add" (click)="agregarFoto()" [disabled]="guardando()">
+            <button class="btn-add" (click)="agregarFoto()" [disabled]="guardando() || subiendoFoto()">
               <i class="fas fa-plus"></i> Agregar Foto
             </button>
           </div>
@@ -438,8 +469,8 @@
           <div class="dash-form card foto-edit-panel">
             <div class="foto-edit-header">
               <h3><i class="fas fa-pencil-alt"></i> Editando: {{ editandoFoto()!.titulo }}</h3>
-              @if (editandoFoto()!.url) {
-                <img class="foto-edit-preview" [src]="editandoFoto()!.url" [alt]="editandoFoto()!.titulo" />
+              @if (editandoFoto()!.youtubeId || editandoFoto()!.url) {
+                <img class="foto-edit-preview" [src]="fotoThumb(editandoFoto()!)" [alt]="editandoFoto()!.titulo" />
               }
             </div>
             <div class="form-row">
@@ -453,8 +484,17 @@
               </div>
             </div>
             <div class="form-group">
+              <label>Subir imagen nueva</label>
+              <input type="file" accept="image/*" (change)="subirImagen($event, editandoFoto()!)" [disabled]="subiendoFoto()" />
+              @if (subiendoFoto()) { <span class="upload-hint"><i class="fas fa-spinner fa-spin"></i> Subiendo...</span> }
+            </div>
+            <div class="form-group">
               <label>URL de Imagen</label>
               <input type="url" [(ngModel)]="editandoFoto()!.url" />
+            </div>
+            <div class="form-group">
+              <label>YouTube ID <small>(opcional)</small></label>
+              <input type="text" [(ngModel)]="editandoFoto()!.youtubeId" />
             </div>
             <div class="form-group">
               <label>Descripción</label>
@@ -478,7 +518,8 @@
         <div class="fotos-grid">
           @for (foto of fotos(); track foto.id) {
             <div class="foto-thumb" [class.selected]="editandoFoto()?.id === foto.id">
-              <img [src]="foto.url" [alt]="foto.titulo" />
+              @if (foto.youtubeId) { <span class="foto-yt-badge"><i class="fab fa-youtube"></i></span> }
+              <img [src]="fotoThumb(foto)" [alt]="foto.titulo" />
               <div class="foto-actions">
                 <span>{{ foto.titulo }}</span>
                 <div class="foto-item-btns">
@@ -492,6 +533,240 @@
         @if (fotos().length === 0) {
           <p class="dash-empty">No hay fotos. Agrega una arriba.</p>
         }
+      </div>
+    }
+
+    <!-- POPUPS -->
+    @if (seccionActiva() === 'popups') {
+      <div class="dash-section">
+        <div class="dash-title-row">
+          <h2 class="dash-title"><i class="fas fa-bell"></i> Popups programados</h2>
+          <button class="btn-toggle-form" [class.active]="mostrarFormPopup()" (click)="mostrarFormPopup.set(!mostrarFormPopup())">
+            <i class="fas" [class.fa-plus]="!mostrarFormPopup()" [class.fa-times]="mostrarFormPopup()"></i>
+            {{ mostrarFormPopup() ? 'Cancelar' : 'Nuevo Popup' }}
+          </button>
+        </div>
+
+        <p class="dash-hint"><i class="fas fa-info-circle"></i> Un popup aparece en el sitio entre su fecha "Desde" y "Hasta", solo si está activo.</p>
+
+        @if (mostrarFormPopup()) {
+          <div class="dash-form card">
+            <h3>Nuevo Popup</h3>
+            <div class="form-group">
+              <label>Título *</label>
+              <input type="text" [(ngModel)]="nuevoPopup.titulo" placeholder="Ej: ¡Nueva presentación!" />
+            </div>
+            <div class="form-group">
+              <label>Mensaje *</label>
+              <textarea [(ngModel)]="nuevoPopup.mensaje" rows="3" placeholder="Texto del aviso"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Desde *</label>
+                <app-fecha-input [(ngModel)]="nuevoPopup.desde" [ngModelOptions]="{ standalone: true }"></app-fecha-input>
+              </div>
+              <div class="form-group">
+                <label>Hasta *</label>
+                <app-fecha-input [(ngModel)]="nuevoPopup.hasta" [ngModelOptions]="{ standalone: true }"></app-fecha-input>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>URL de imagen <small>(opcional)</small></label>
+              <input type="url" [(ngModel)]="nuevoPopup.imagen" placeholder="https://..." />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Enlace <small>(opcional)</small></label>
+                <input type="text" [(ngModel)]="nuevoPopup.enlace" placeholder="/presentaciones o https://..." />
+              </div>
+              <div class="form-group">
+                <label>Texto del botón <small>(opcional)</small></label>
+                <input type="text" [(ngModel)]="nuevoPopup.textoEnlace" placeholder="Ver más" />
+              </div>
+            </div>
+            <label class="check-row">
+              <input type="checkbox" [(ngModel)]="nuevoPopup.activo" /> Activo
+            </label>
+            <button class="btn-add" (click)="agregarPopup()" [disabled]="guardando()">
+              <i class="fas fa-plus"></i> Crear Popup
+            </button>
+          </div>
+        }
+
+        <div class="dash-list">
+          @for (p of popups(); track p.id) {
+            <div class="dash-item" [class.editing]="editandoPopup()?.id === p.id">
+              @if (editandoPopup()?.id === p.id) {
+                <div class="dash-edit-form">
+                  <div class="form-group">
+                    <label>Título</label>
+                    <input type="text" [(ngModel)]="editandoPopup()!.titulo" />
+                  </div>
+                  <div class="form-group">
+                    <label>Mensaje</label>
+                    <textarea [(ngModel)]="editandoPopup()!.mensaje" rows="3"></textarea>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Desde</label>
+                      <app-fecha-input [(ngModel)]="editandoPopup()!.desde" [ngModelOptions]="{ standalone: true }"></app-fecha-input>
+                    </div>
+                    <div class="form-group">
+                      <label>Hasta</label>
+                      <app-fecha-input [(ngModel)]="editandoPopup()!.hasta" [ngModelOptions]="{ standalone: true }"></app-fecha-input>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>URL de imagen</label>
+                    <input type="url" [(ngModel)]="editandoPopup()!.imagen" />
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Enlace</label>
+                      <input type="text" [(ngModel)]="editandoPopup()!.enlace" />
+                    </div>
+                    <div class="form-group">
+                      <label>Texto del botón</label>
+                      <input type="text" [(ngModel)]="editandoPopup()!.textoEnlace" />
+                    </div>
+                  </div>
+                  <label class="check-row">
+                    <input type="checkbox" [(ngModel)]="editandoPopup()!.activo" /> Activo
+                  </label>
+                  <div class="edit-actions">
+                    <button class="btn-save" (click)="guardarEdicionPopup()" [disabled]="guardando()">
+                      <i class="fas fa-check"></i> Guardar
+                    </button>
+                    <button class="btn-cancel" (click)="editandoPopup.set(null)">
+                      <i class="fas fa-times"></i> Cancelar
+                    </button>
+                  </div>
+                </div>
+              } @else {
+                <div class="dash-item-info">
+                  <span class="dash-item-badge" [class.off]="!p.activo">{{ p.activo ? 'Activo' : 'Inactivo' }}</span>
+                  <strong>{{ p.titulo }}</strong>
+                  <span><i class="fas fa-calendar"></i> {{ p.desde | fechaLarga }} → {{ p.hasta | fechaLarga }}</span>
+                </div>
+                <div class="item-btns">
+                  <button class="btn-edit" (click)="togglePopupActivo(p)" [title]="p.activo ? 'Desactivar' : 'Activar'">
+                    <i class="fas" [class.fa-toggle-on]="p.activo" [class.fa-toggle-off]="!p.activo"></i>
+                  </button>
+                  <button class="btn-edit" (click)="editarPopup(p)"><i class="fas fa-pencil-alt"></i></button>
+                  <button class="btn-del" (click)="eliminarPopup(p.id!)"><i class="fas fa-trash"></i></button>
+                </div>
+              }
+            </div>
+          }
+          @if (popups().length === 0) {
+            <p class="dash-empty">No hay popups. Crea uno arriba.</p>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- CONTENIDO DEL SITIO -->
+    @if (seccionActiva() === 'contenido') {
+      <div class="dash-section">
+        <div class="dash-title-row">
+          <h2 class="dash-title"><i class="fas fa-sliders-h"></i> Contenido del Sitio</h2>
+          <button class="btn-add" (click)="guardarContenido()" [disabled]="guardando()">
+            <i class="fas fa-check"></i> Guardar cambios
+          </button>
+        </div>
+
+        <div class="dash-form card">
+          <h3><i class="fas fa-star"></i> Banner principal (Hero)</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Insignia</label>
+              <input type="text" [(ngModel)]="contenido().hero.badge" />
+            </div>
+            <div class="form-group">
+              <label>Ciudad (destacada)</label>
+              <input type="text" [(ngModel)]="contenido().hero.ciudad" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Título</label>
+            <input type="text" [(ngModel)]="contenido().hero.titulo" />
+          </div>
+          <div class="form-group">
+            <label>Descripción</label>
+            <textarea [(ngModel)]="contenido().hero.descripcion" rows="3"></textarea>
+          </div>
+
+          <label class="sub-label">Frases rotativas (animación)</label>
+          @for (f of contenido().hero.frases; track $index) {
+            <div class="inline-row">
+              <input type="text" [(ngModel)]="contenido().hero.frases[$index]" />
+              <button class="btn-del-sm" (click)="removeFrase($index)"><i class="fas fa-trash"></i></button>
+            </div>
+          }
+          <button class="btn-mini" (click)="addFrase()"><i class="fas fa-plus"></i> Agregar frase</button>
+
+          <label class="sub-label">Estadísticas</label>
+          @for (s of contenido().hero.stats; track $index) {
+            <div class="inline-row">
+              <input type="text" class="stat-num-input" [(ngModel)]="contenido().hero.stats[$index].num" placeholder="15+" />
+              <input type="text" [(ngModel)]="contenido().hero.stats[$index].label" placeholder="Años de historia" />
+              <button class="btn-del-sm" (click)="removeStat($index)"><i class="fas fa-trash"></i></button>
+            </div>
+          }
+          <button class="btn-mini" (click)="addStat()"><i class="fas fa-plus"></i> Agregar estadística</button>
+        </div>
+
+        <div class="dash-form card">
+          <h3><i class="fas fa-users"></i> Sección "Quiénes somos"</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Etiqueta</label>
+              <input type="text" [(ngModel)]="contenido().about.label" />
+            </div>
+            <div class="form-group">
+              <label>Título</label>
+              <input type="text" [(ngModel)]="contenido().about.titulo" />
+            </div>
+          </div>
+          <label class="sub-label">Párrafos</label>
+          @for (p of contenido().about.parrafos; track $index) {
+            <div class="inline-row">
+              <textarea [(ngModel)]="contenido().about.parrafos[$index]" rows="2"></textarea>
+              <button class="btn-del-sm" (click)="removeParrafo($index)"><i class="fas fa-trash"></i></button>
+            </div>
+          }
+          <button class="btn-mini" (click)="addParrafo()"><i class="fas fa-plus"></i> Agregar párrafo</button>
+        </div>
+
+        <div class="dash-form card">
+          <h3><i class="fas fa-address-card"></i> Contacto y redes</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Dirección</label>
+              <input type="text" [(ngModel)]="contenido().contacto.direccion" />
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" [(ngModel)]="contenido().contacto.email" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Instagram (URL)</label>
+            <input type="url" [(ngModel)]="contenido().contacto.instagram" />
+          </div>
+          <div class="form-group">
+            <label>YouTube (URL)</label>
+            <input type="url" [(ngModel)]="contenido().contacto.youtube" />
+          </div>
+          <div class="form-group">
+            <label>Facebook (URL)</label>
+            <input type="url" [(ngModel)]="contenido().contacto.facebook" />
+          </div>
+        </div>
+
+        <button class="btn-add" (click)="guardarContenido()" [disabled]="guardando()">
+          <i class="fas fa-check"></i> Guardar cambios
+        </button>
       </div>
     }
   </main>

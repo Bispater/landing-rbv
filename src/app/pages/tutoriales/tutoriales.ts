@@ -1,8 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Tutorial } from '../../core/services/data.service';
+import { Tutorial, DataService } from '../../core/services/data.service';
 
 @Component({
   selector: 'app-tutoriales',
@@ -18,10 +17,10 @@ export class TutorialesComponent implements OnInit {
   activo = signal<Tutorial | null>(null);
   safeUrl = signal<SafeResourceUrl | null>(null);
 
-  constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
+  constructor(private data: DataService, private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
-    this.http.get<Tutorial[]>('assets/data/tutorials.json').subscribe((data) => {
+    this.data.listenToList<Tutorial>('tutoriales', (data) => {
       this.tutoriales.set(data);
     });
   }

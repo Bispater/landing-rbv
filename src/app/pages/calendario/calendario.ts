@@ -1,25 +1,27 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Evento } from '../../core/services/data.service';
+import { Evento, DataService, ocurrenciasEvento, fechaPrincipal } from '../../core/services/data.service';
+import { FechaLargaPipe } from '../../core/util/fecha.pipe';
 
 @Component({
   selector: 'app-calendario',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FechaLargaPipe],
   templateUrl: './calendario.html',
   styleUrl: './calendario.scss',
 })
 export class CalendarioComponent implements OnInit {
   eventos = signal<Evento[]>([]);
+  ocurrenciasDe = ocurrenciasEvento;
+  fechaPrincipal = fechaPrincipal;
   filtro = signal<string>('todos');
   mesActual = signal(new Date());
   tiposEvento = ['todos', 'evento', 'presentacion', 'ensayo'];
 
-  constructor(private http: HttpClient) {}
+  constructor(private data: DataService) {}
 
   ngOnInit(): void {
-    this.http.get<Evento[]>('assets/data/events.json').subscribe((data) => {
+    this.data.listenToList<Evento>('eventos', (data) => {
       this.eventos.set(data);
     });
   }

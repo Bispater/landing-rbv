@@ -24,18 +24,21 @@
           }
           <div class="pres-left">
             <div class="pres-date">
-              <span class="pres-day">{{ p.fecha | slice:8:10 }}</span>
-              <span class="pres-month">{{ getMes(p.fecha) }}</span>
-              <span class="pres-year">{{ p.fecha | slice:0:4 }}</span>
+              <span class="pres-day">{{ fechaPrincipal(p) | slice:8:10 }}</span>
+              <span class="pres-month">{{ getMes(fechaPrincipal(p)) }}</span>
+              <span class="pres-year">{{ fechaPrincipal(p) | slice:0:4 }}</span>
             </div>
           </div>
           <div class="pres-content">
             <h3>{{ p.titulo }}</h3>
+            <div class="pres-fechas">
+              <i class="fas fa-calendar"></i>
+              @for (o of ocurrenciasDe(p); track o.fecha; let last = $last) {
+                {{ o.fecha | fechaLarga }}@if (o.hora) { · {{ o.hora }} hrs }@if (!last) { <span class="fecha-sep">y</span> }
+              }
+            </div>
             <p>{{ p.descripcion }}</p>
             <div class="pres-meta">
-              @if (p.hora) {
-                <span><i class="fas fa-clock"></i> {{ p.hora }}</span>
-              }
               @if (p.lugar) {
                 <span><i class="fas fa-map-marker-alt"></i> {{ p.lugar }}</span>
               }

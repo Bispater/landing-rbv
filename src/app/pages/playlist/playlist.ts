@@ -1,8 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Cancion } from '../../core/services/data.service';
+import { Cancion, DataService } from '../../core/services/data.service';
 
 @Component({
   selector: 'app-playlist',
@@ -16,12 +15,12 @@ export class PlaylistComponent implements OnInit {
   activa = signal<Cancion | null>(null);
   safeUrl = signal<SafeResourceUrl | null>(null);
 
-  constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
+  constructor(private data: DataService, private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
-    this.http.get<Cancion[]>('assets/data/playlist.json').subscribe((data) => {
+    this.data.listenToList<Cancion>('playlist', (data) => {
       this.canciones.set(data);
-      if (data.length > 0) this.reproducir(data[0]);
+      if (data.length > 0 && !this.activa()) this.reproducir(data[0]);
     });
   }
 

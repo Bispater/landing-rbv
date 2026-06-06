@@ -4,12 +4,13 @@
   </div>
   <div class="hero-overlay"></div>
   <div class="container hero-content">
-    <div class="hero-badge"><img src="assets/images/logopng.png" alt="RBV" class="badge-logo"> Agrupación Andina</div>
-    <h1>Reales Brillantes<br /><span class="hero-city">Valparaíso</span></h1>
-    <p class="hero-desc">
-      Preservando y difundiendo la música y danza andina en el corazón de la Quinta Región.
-      Únete a nuestra comunidad de folclore y tradición.
-    </p>
+    <div class="hero-badge"><img src="assets/images/logopng.png" alt="RBV" class="badge-logo"> {{ contenido.hero.badge }}</div>
+    <h1>{{ contenido.hero.titulo }}<br /><span class="hero-city">{{ contenido.hero.ciudad }}</span></h1>
+    <div class="hero-rotating">
+      <span class="rotating-label">Somos</span>
+      <span class="rotating-word" [class.is-hidden]="!fraseVisible">{{ frases[fraseActual] }}</span>
+    </div>
+    <p class="hero-desc">{{ contenido.hero.descripcion }}</p>
     <div class="hero-actions">
       <a routerLink="/presentaciones" class="btn-gold">
         <i class="fas fa-calendar-star"></i> Próximas Presentaciones
@@ -19,20 +20,13 @@
       </a>
     </div>
     <div class="hero-stats">
-      <div class="stat">
-        <span class="stat-num">15+</span>
-        <span class="stat-lbl">Años de historia</span>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat">
-        <span class="stat-num">50+</span>
-        <span class="stat-lbl">Integrantes</span>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat">
-        <span class="stat-num">100+</span>
-        <span class="stat-lbl">Presentaciones</span>
-      </div>
+      @for (s of contenido.hero.stats; track $index) {
+        @if ($index > 0) { <div class="stat-divider"></div> }
+        <div class="stat">
+          <span class="stat-num">{{ s.num }}</span>
+          <span class="stat-lbl">{{ s.label }}</span>
+        </div>
+      }
     </div>
   </div>
   <div class="hero-scroll"><i class="fas fa-chevron-down"></i></div>
@@ -42,10 +36,11 @@
   <div class="container">
     <div class="about-grid">
       <div class="about-text">
-        <span class="label-tag">Quiénes somos</span>
-        <h2>Una familia unida por<br /> la música andina</h2>
-        <p>Somos una agrupación de folclore andino nacida en Valparaíso, comprometida con la preservación y difusión de la cultura andina a través de la música, la danza y las tradiciones ancestrales.</p>
-        <p>Nuestro nombre, <strong>Reales Brillantes</strong>, refleja el brillo y la nobleza de las tradiciones que llevamos en el corazón.</p>
+        <span class="label-tag">{{ contenido.about.label }}</span>
+        <h2>{{ contenido.about.titulo }}</h2>
+        @for (p of contenido.about.parrafos; track $index) {
+          <p>{{ p }}</p>
+        }
         <div class="about-actions">
           <a routerLink="/comisiones" class="btn-primary"><i class="fas fa-users"></i> Conocer el equipo</a>
           <a routerLink="/estatutos" class="btn-outline">Nuestros Estatutos</a>
@@ -53,24 +48,24 @@
       </div>
       <div class="about-cards">
         <div class="about-card red">
-          <i class="fas fa-music"></i>
-          <h4>Música Andina</h4>
-          <p>Zampoñas, quenas, bombos y más instrumentos ancestrales</p>
+          <i class="fas fa-shoe-prints"></i>
+          <h4>Danza Caporal</h4>
+          <p>Saltos, cascabeles y botas: la energía del caporal de los Yungas</p>
         </div>
         <div class="about-card gold">
           <i class="fas fa-hat-cowboy"></i>
-          <h4>Danza y Vestuario</h4>
-          <p>Trajes típicos y coreografías de las culturas andinas</p>
+          <h4>Trajes y Brillo</h4>
+          <p>Vestuario bordado de caporales y cholitas, lleno de color</p>
         </div>
         <div class="about-card dark">
-          <i class="fas fa-calendar-check"></i>
-          <h4>Eventos</h4>
-          <p>Participación en festivales, carnavales y celebraciones</p>
+          <i class="fas fa-sun"></i>
+          <h4>Carnaval Andino</h4>
+          <p>Pasacalles, fraternidades y el Carnaval con la Fuerza del Sol</p>
         </div>
         <div class="about-card bordeaux">
           <i class="fas fa-graduation-cap"></i>
           <h4>Formación</h4>
-          <p>Talleres y tutoriales para aprender nuestros pasos</p>
+          <p>Talleres y tutoriales para aprender el paso caporal</p>
         </div>
       </div>
     </div>
@@ -89,8 +84,12 @@
           </div>
           <div class="event-info">
             <div class="event-date">
-              <i class="fas fa-calendar"></i> {{ evento.fecha }}
-              @if (evento.hora) { <span>· {{ evento.hora }}</span> }
+              <i class="fas fa-calendar"></i>
+              <span>
+                @for (o of ocurrenciasDe(evento); track o.fecha; let last = $last) {
+                  {{ o.fecha | fechaLarga }}@if (o.hora) { · {{ o.hora }} hrs }@if (!last) { <span class="fecha-sep">y</span> }
+                }
+              </span>
             </div>
             <h3>{{ evento.titulo }}</h3>
             <p>{{ evento.descripcion }}</p>
@@ -137,6 +136,40 @@
         <h3>Tutoriales en YouTube</h3>
         <p>Encuentra videos tutoriales con los pasos básicos y avanzados de nuestras danzas andinas. Aprende a tu ritmo desde cualquier lugar.</p>
         <a routerLink="/tutoriales" class="btn-primary"><i class="fas fa-play-circle"></i> Ver Tutoriales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-join">
+  <div class="container">
+    <div class="join-card">
+      <span class="label-tag">Súmate</span>
+      <h2>¿Quieres bailar con nosotros?</h2>
+      <p>Recibimos nuevos integrantes durante todo el año. No necesitas experiencia previa: solo ganas de aprender la danza caporal y ser parte de la fraternidad.</p>
+      <div class="join-info">
+        @if (contenido.contacto.direccion) {
+          <div class="join-item"><i class="fas fa-map-marker-alt"></i> {{ contenido.contacto.direccion }}</div>
+        }
+        @if (contenido.contacto.email) {
+          <a class="join-item" [href]="'mailto:' + contenido.contacto.email"><i class="fas fa-envelope"></i> {{ contenido.contacto.email }}</a>
+        }
+      </div>
+      <div class="join-actions">
+        @if (contenido.contacto.email) {
+          <a [href]="'mailto:' + contenido.contacto.email" class="btn-gold"><i class="fas fa-paper-plane"></i> Escríbenos</a>
+        }
+        <div class="join-socials">
+          @if (contenido.contacto.instagram) {
+            <a [href]="contenido.contacto.instagram" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          }
+          @if (contenido.contacto.youtube) {
+            <a [href]="contenido.contacto.youtube" target="_blank" rel="noopener" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          }
+          @if (contenido.contacto.facebook) {
+            <a [href]="contenido.contacto.facebook" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+          }
+        </div>
       </div>
     </div>
   </div>

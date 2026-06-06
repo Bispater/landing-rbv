@@ -1,23 +1,27 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DataService, Evento } from '../../core/services/data.service';
+import { DataService, Evento, ocurrenciasEvento, fechaPrincipal } from '../../core/services/data.service';
+import { FechaLargaPipe } from '../../core/util/fecha.pipe';
 
 @Component({
   selector: 'app-eventos',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FechaLargaPipe],
   templateUrl: './eventos.html',
   styleUrl: './eventos.scss',
 })
 export class EventosComponent implements OnInit {
   eventos = signal<Evento[]>([]);
+  ocurrenciasDe = ocurrenciasEvento;
 
   constructor(private data: DataService) {}
 
   ngOnInit(): void {
-    this.data.listenToRef<Record<string, Evento>>('eventos', (val) => {
-      const all = val ? Object.entries(val).map(([id, v]) => ({ ...v, id })) : [];
-      this.eventos.set(all.filter((e) => e.tipo === 'evento'));
+    this.data.listenToList<Evento>('eventos', (all) => {
+      this.eventos.set(
+        all.filter((e) => e.tipo === 'evento')
+          .sort((a, b) => (fechaPrincipal(a) > fechaPrincipal(b) ? 1 : -1)),
+      );
     });
   }
 }

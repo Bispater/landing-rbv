@@ -1,7 +1,4 @@
 <footer class="footer">
-  <div class="footer-wave">
-    <svg viewBox="0 0 1440 60" preserveAspectRatio="none"><path fill="#1A1A1A" d="M0,0 C360,60 1080,60 1440,0 L1440,60 L0,60 Z"/></svg>
-  </div>
   <div class="footer-body">
     <div class="container">
       <div class="footer-grid">
@@ -11,12 +8,11 @@
           </div>
           <h3>Reales Brillantes</h3>
           <p class="brand-city">Valparaíso</p>
-          <p class="brand-desc">Agrupación Andina que preserva y difunde la cultura andina en la región de Valparaíso, Chile.</p>
+          <p class="brand-desc">Fraternidad de Caporales que difunde la danza andina en la región de Valparaíso, Chile.</p>
           <div class="social-links">
-            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-            <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+            @if (contacto.facebook) { <a [href]="contacto.facebook" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a> }
+            @if (contacto.instagram) { <a [href]="contacto.instagram" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a> }
+            @if (contacto.youtube) { <a [href]="contacto.youtube" target="_blank" rel="noopener" aria-label="YouTube"><i class="fab fa-youtube"></i></a> }
           </div>
         </div>
 
@@ -32,9 +28,9 @@
         <div class="footer-info">
           <h4>Información</h4>
           <ul class="info-list">
-            <li><i class="fas fa-map-marker-alt"></i> Valparaíso, Chile</li>
-            <li><i class="fas fa-envelope"></i> contacto&#64;realesbrillantes.cl</li>
-            <li><i class="fas fa-music"></i> Folclore Andino</li>
+            <li><i class="fas fa-map-marker-alt"></i> {{ contacto.direccion }}</li>
+            <li><a [href]="'mailto:' + contacto.email"><i class="fas fa-envelope"></i> {{ contacto.email }}</a></li>
+            <li><i class="fas fa-shoe-prints"></i> Caporales · Danza Andina</li>
           </ul>
         </div>
       </div>

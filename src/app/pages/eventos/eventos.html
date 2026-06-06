@@ -17,10 +17,12 @@
           </div>
           <div class="evento-card-body">
             <div class="evento-meta">
-              <span class="evento-date"><i class="fas fa-calendar"></i> {{ evento.fecha }}</span>
-              @if (evento.hora) {
-                <span class="evento-hora"><i class="fas fa-clock"></i> {{ evento.hora }}</span>
-              }
+              <span class="evento-date">
+                <i class="fas fa-calendar"></i>
+                @for (o of ocurrenciasDe(evento); track o.fecha; let last = $last) {
+                  {{ o.fecha | fechaLarga }}@if (o.hora) { · {{ o.hora }} hrs }@if (!last) { <span class="fecha-sep">y</span> }
+                }
+              </span>
             </div>
             <h3>{{ evento.titulo }}</h3>
             <p>{{ evento.descripcion }}</p>

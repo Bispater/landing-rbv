@@ -1,0 +1,25 @@
+@if (actual(); as p) {
+  <div class="popup-overlay" (click)="cerrar()">
+    <div class="popup-card" (click)="$event.stopPropagation()">
+      <button class="popup-close" (click)="cerrar()" aria-label="Cerrar"><i class="fas fa-times"></i></button>
+      @if (p.imagen) {
+        <div class="popup-img" [style.background-image]="'url(' + p.imagen + ')'"></div>
+      }
+      <div class="popup-body">
+        <h3>{{ p.titulo }}</h3>
+        <p>{{ p.mensaje }}</p>
+        @if (p.enlace) {
+          @if (esExterno(p.enlace)) {
+            <a class="popup-btn" [href]="p.enlace" target="_blank" rel="noopener" (click)="cerrar()">
+              {{ p.textoEnlace || 'Ver más' }} <i class="fas fa-arrow-right"></i>
+            </a>
+          } @else {
+            <a class="popup-btn" [routerLink]="p.enlace" (click)="cerrar()">
+              {{ p.textoEnlace || 'Ver más' }} <i class="fas fa-arrow-right"></i>
+            </a>
+          }
+        }
+      </div>
+    </div>
+  </div>
+}
