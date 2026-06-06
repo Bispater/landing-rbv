@@ -754,9 +754,21 @@
 
           @if (contenido().hero.video.tipo === 'youtube') {
             <div class="form-group">
-              <label>YouTube ID del video</label>
-              <input type="text" [(ngModel)]="contenido().hero.video.youtubeId" placeholder="ej: fbjNfowfN-A" />
+              <label>Link o ID de YouTube</label>
+              <input type="text" [(ngModel)]="contenido().hero.video.youtubeId" (change)="normalizarYoutubeId()"
+                     placeholder="https://www.youtube.com/watch?v=... o el ID" />
             </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Desde <small>(segundo de inicio)</small></label>
+                <input type="number" min="0" [(ngModel)]="contenido().hero.video.inicio" placeholder="0" />
+              </div>
+              <div class="form-group">
+                <label>Hasta <small>(segundo de fin · 0 = hasta el final)</small></label>
+                <input type="number" min="0" [(ngModel)]="contenido().hero.video.fin" placeholder="0" />
+              </div>
+            </div>
+            <p class="dash-hint"><i class="fas fa-info-circle"></i> El video se reproduce en bucle entre "Desde" y "Hasta". Ej: Desde 5, Hasta 13 → repite ese tramo de 8 segundos.</p>
           } @else {
             <div class="form-group">
               <label>Subir video <small>(máx {{ MAX_VIDEO_MB }} MB · mp4/webm)</small></label>

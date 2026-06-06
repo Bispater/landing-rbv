@@ -11,7 +11,7 @@ declare global {
   }
 }
 declare const YT: { Player: new (el: string, opts: object) => YTPlayer };
-interface YTPlayer { playVideo(): void; seekTo(s: number, a: boolean): void; getPlayerState(): number; getCurrentTime(): number; loadVideoById(id: string): void; }
+interface YTPlayer { playVideo(): void; seekTo(s: number, a: boolean): void; getPlayerState(): number; getCurrentTime(): number; loadVideoById(id: string, start?: number): void; }
 
 @Component({
   selector: 'app-home',
@@ -37,8 +37,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   videoTipo: 'youtube' | 'archivo' = 'youtube';
   videoUrl = '';
   private videoYoutubeId = DEFAULT_CONTENIDO.hero.video.youtubeId;
+  private videoInicio = 0;
+  private videoFin = 0;
   private ytReady = false;
   private ytPlayer: YTPlayer | null = null;
+  private loopInterval: ReturnType<typeof setInterval> | null = null;
   private onResize = (): void => this.forceIframeSize();
 
   constructor(private data: DataService, private zone: NgZone) {}
@@ -58,6 +61,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       this.videoTipo = v.tipo;
       this.videoUrl = v.url;
       this.videoYoutubeId = v.youtubeId || this.videoYoutubeId;
+      this.videoInicio = Math.max(0, v.inicio ?? 0);
+      this.videoFin = Math.max(0, v.fin ?? 0);
       this.zone.runOutsideAngular(() => this.aplicarHeroVideo());
     });
 
@@ -93,7 +98,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private aplicarHeroVideo(): void {
     if (this.videoTipo !== 'youtube' || !this.ytReady || !this.videoYoutubeId) return;
     if (this.ytPlayer) {
-      this.ytPlayer.loadVideoById(this.videoYoutubeId);
+      this.ytPlayer.loadVideoById(this.videoYoutubeId, this.videoInicio);
     } else if (document.getElementById('yt-hero-player')) {
       this.initPlayer(this.videoYoutubeId);
     }
@@ -112,22 +117,36 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         modestbranding: 1,
         rel: 0,
         showinfo: 0,
-        start: 0,
+        start: this.videoInicio,
       },
       events: {
         onReady: (e: { target: YTPlayer }) => {
           e.target.playVideo();
           this.forceIframeSize();
+          this.startLoop();
         },
-        // Reproduce en bucle: al terminar, vuelve a empezar.
+        // Si termina el video, vuelve al inicio del tramo.
         onStateChange: (e: { data: number }) => {
           if (e.data === 0) {
-            this.ytPlayer?.seekTo(0, true);
+            this.ytPlayer?.seekTo(this.videoInicio, true);
             this.ytPlayer?.playVideo();
           }
         },
       },
     });
+  }
+
+  /** Reproduce en bucle el tramo [inicio, fin]: al pasar el segundo "fin" vuelve a "inicio". */
+  private startLoop(): void {
+    if (this.loopInterval) clearInterval(this.loopInterval);
+    this.loopInterval = setInterval(() => {
+      if (!this.ytPlayer) return;
+      const t = this.ytPlayer.getCurrentTime();
+      const reproduciendo = this.ytPlayer.getPlayerState() === 1;
+      if (this.videoFin > this.videoInicio && reproduciendo && t >= this.videoFin) {
+        this.ytPlayer.seekTo(this.videoInicio, true);
+      }
+    }, 250);
   }
 
   /** Dimensiona el iframe de YouTube para cubrir (cover 16:9) el contenedor real del hero,
@@ -159,6 +178,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.fraseInterval) clearInterval(this.fraseInterval);
+    if (this.loopInterval) clearInterval(this.loopInterval);
     window.removeEventListener('resize', this.onResize);
   }
 }

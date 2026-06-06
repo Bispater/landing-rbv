@@ -129,6 +129,10 @@ export interface HeroVideo {
   tipo: 'youtube' | 'archivo';
   youtubeId: string;
   url: string;
+  /** Segundo de inicio del tramo en bucle (solo YouTube). */
+  inicio?: number;
+  /** Segundo de fin del tramo en bucle (0 = hasta el final). Solo YouTube. */
+  fin?: number;
 }
 
 /** Editable site-wide content (hero, about, contact), stored at the RTDB `contenido` node. */
@@ -176,7 +180,7 @@ export const DEFAULT_CONTENIDO: Contenido = {
       { num: '50+', label: 'Integrantes' },
       { num: '100+', label: 'Presentaciones' },
     ],
-    video: { tipo: 'youtube', youtubeId: 'fbjNfowfN-A', url: '' },
+    video: { tipo: 'youtube', youtubeId: 'fbjNfowfN-A', url: '', inicio: 0, fin: 0 },
   },
   about: {
     label: 'Quiénes somos',

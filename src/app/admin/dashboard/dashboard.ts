@@ -169,6 +169,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  /** Si pegan un link de YouTube en el campo del video, extrae el ID de 11 caracteres. */
+  normalizarYoutubeId(): void {
+    const v = this.contenido().hero.video;
+    const val = (v.youtubeId || '').trim();
+    const m = val.match(/(?:youtu\.be\/|[?&]v=|embed\/|shorts\/)([\w-]{11})/) || val.match(/^([\w-]{11})$/);
+    if (m) v.youtubeId = m[1];
+  }
+
   async guardarContenido(): Promise<void> {
     this.guardando.set(true);
     await this.data.setItem('contenido', this.contenido());
