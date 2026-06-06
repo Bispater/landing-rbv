@@ -191,6 +191,9 @@ export interface Contenido {
     youtube: string;
     facebook: string;
   };
+  /** URL de un PDF opcional para Estatutos / Reglamentos. */
+  estatutosPdf?: string;
+  reglamentosPdf?: string;
 }
 
 export const DEFAULT_CONTENIDO: Contenido = {
@@ -230,6 +233,8 @@ export const DEFAULT_CONTENIDO: Contenido = {
     youtube: 'https://www.youtube.com/@realesbrillantesvalparaiso6637',
     facebook: 'https://www.facebook.com/reales.brillantes.valparaiso/',
   },
+  estatutosPdf: '',
+  reglamentosPdf: '',
 };
 
 /** Returns the YouTube thumbnail URL for a video id (free, Google-CDN hosted). */
@@ -259,6 +264,8 @@ export function conContenidoDefaults(val: Partial<Contenido> | null | undefined)
     },
     convocatoria: { ...d.convocatoria, ...(val.convocatoria ?? {}) },
     contacto: { ...d.contacto, ...(val.contacto ?? {}) },
+    estatutosPdf: val.estatutosPdf ?? '',
+    reglamentosPdf: val.reglamentosPdf ?? '',
   };
 }
 

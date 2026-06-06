@@ -780,6 +780,21 @@
           <button class="btn-toggle-form" (click)="cargarBaseEstatutos()" title="Cargar el texto base"><i class="fas fa-download"></i> Texto base</button>
         </div>
         <div class="dash-form card">
+          <h3><i class="fas fa-file-pdf"></i> Documento PDF (opcional)</h3>
+          <p class="dash-hint" style="margin: 0 0 0.85rem"><i class="fas fa-info-circle"></i> Si subes un PDF, en la página aparece un botón "Ver documento (PDF)". Puedes usarlo junto a los artículos de texto o en vez de ellos.</p>
+          <div class="form-group">
+            <label>Subir PDF <small>(máx 15 MB)</small></label>
+            <input type="file" accept="application/pdf" (change)="subirPdf($event, 'estatutosPdf')" [disabled]="subiendoPdf()" />
+            @if (subiendoPdf()) { <span class="upload-hint"><i class="fas fa-spinner fa-spin"></i> Subiendo...</span> }
+          </div>
+          @if (contenido().estatutosPdf) {
+            <div class="pdf-actual">
+              <a [href]="contenido().estatutosPdf" target="_blank" rel="noopener"><i class="fas fa-file-pdf"></i> Ver PDF actual</a>
+              <button class="btn-del" (click)="quitarPdf('estatutosPdf')" title="Quitar PDF"><i class="fas fa-trash"></i></button>
+            </div>
+          }
+        </div>
+        <div class="dash-form card">
           <h3>Nuevo artículo</h3>
           <div class="form-group">
             <label>Título</label>
@@ -824,6 +839,21 @@
         <div class="dash-title-row" style="margin-top: 2.5rem">
           <h2 class="dash-title"><i class="fas fa-gavel"></i> Reglamentos</h2>
           <button class="btn-toggle-form" (click)="cargarBaseReglamentos()" title="Cargar el texto base"><i class="fas fa-download"></i> Texto base</button>
+        </div>
+        <div class="dash-form card">
+          <h3><i class="fas fa-file-pdf"></i> Documento PDF (opcional)</h3>
+          <p class="dash-hint" style="margin: 0 0 0.85rem"><i class="fas fa-info-circle"></i> Si subes un PDF, en la página aparece un botón "Ver documento (PDF)".</p>
+          <div class="form-group">
+            <label>Subir PDF <small>(máx 15 MB)</small></label>
+            <input type="file" accept="application/pdf" (change)="subirPdf($event, 'reglamentosPdf')" [disabled]="subiendoPdf()" />
+            @if (subiendoPdf()) { <span class="upload-hint"><i class="fas fa-spinner fa-spin"></i> Subiendo...</span> }
+          </div>
+          @if (contenido().reglamentosPdf) {
+            <div class="pdf-actual">
+              <a [href]="contenido().reglamentosPdf" target="_blank" rel="noopener"><i class="fas fa-file-pdf"></i> Ver PDF actual</a>
+              <button class="btn-del" (click)="quitarPdf('reglamentosPdf')" title="Quitar PDF"><i class="fas fa-trash"></i></button>
+            </div>
+          }
         </div>
         <div class="dash-form card">
           <h3>Nuevo reglamento</h3>

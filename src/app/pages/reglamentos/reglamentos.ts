@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DataService, DocSeccion } from '../../core/services/data.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DataService, DocSeccion, Contenido } from '../../core/services/data.service';
 
 export const REGLAMENTOS_DEFAULT: DocSeccion[] = [
   { icono: 'fa-users', titulo: 'Reglamento de Membresía', contenido: 'Todo integrante deberá asistir al menos al 80% de los ensayos mensuales.\nEl ingreso a la agrupación requiere período de prueba de 3 meses.\nLos miembros deben mantener una conducta respetuosa dentro y fuera de la agrupación.\nLas ausencias deben ser justificadas con anticipación al director artístico.' },
@@ -19,12 +20,19 @@ export const REGLAMENTOS_DEFAULT: DocSeccion[] = [
 })
 export class ReglamentosComponent implements OnInit {
   reglamentos = signal<DocSeccion[]>(REGLAMENTOS_DEFAULT);
+  pdfUrl = signal('');
+  pdfSafe = signal<SafeResourceUrl | null>(null);
 
-  constructor(private data: DataService) {}
+  constructor(private data: DataService, private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
     this.data.listenToList<DocSeccion>('reglamentos', (val) => {
       this.reglamentos.set(val.length ? val : REGLAMENTOS_DEFAULT);
+    });
+    this.data.listenToRef<Contenido>('contenido', (c) => {
+      const url = c?.reglamentosPdf || '';
+      this.pdfUrl.set(url);
+      this.pdfSafe.set(url ? this.sanitizer.bypassSecurityTrustResourceUrl(url) : null);
     });
   }
 

@@ -83,6 +83,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   guardando = signal(false);
   subiendoFoto = signal(false);
   subiendoVideo = signal(false);
+  subiendoPdf = signal(false);
 
   readonly MAX_IMAGEN_MB = 5;
   readonly MAX_VIDEO_MB = 50;
@@ -536,6 +537,33 @@ export class DashboardComponent implements OnInit, OnDestroy {
   eliminarReglamento(id: string): void { this.eliminarDoc('reglamentos', id); }
   cargarBaseEstatutos(): void { this.cargarBaseDoc('estatutos', ESTATUTOS_DEFAULT); }
   cargarBaseReglamentos(): void { this.cargarBaseDoc('reglamentos', REGLAMENTOS_DEFAULT); }
+
+  /** Sube un PDF a Cloudinary y lo guarda en el campo indicado del contenido. */
+  async subirPdf(event: Event, campo: 'estatutosPdf' | 'reglamentosPdf'): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.subiendoPdf.set(true);
+    try {
+      const url = await this.data.uploadMedia(file, 15);
+      this.contenido()[campo] = url;
+      await this.data.setItem('contenido', this.contenido());
+      this.mostrarMensaje('PDF subido y guardado');
+    } catch (e) {
+      this.mostrarMensaje(e instanceof Error ? e.message : 'Error al subir el PDF', 'error');
+    } finally {
+      this.subiendoPdf.set(false);
+      input.value = '';
+    }
+  }
+
+  async quitarPdf(campo: 'estatutosPdf' | 'reglamentosPdf'): Promise<void> {
+    this.contenido()[campo] = '';
+    try {
+      await this.data.setItem('contenido', this.contenido());
+      this.mostrarMensaje('PDF quitado');
+    } catch (e) { this.avisarError(e); }
+  }
 
   async togglePopupActivo(p: Popup): Promise<void> {
     if (!p.id) return;

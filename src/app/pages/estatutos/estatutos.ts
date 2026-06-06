@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DataService, DocSeccion } from '../../core/services/data.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DataService, DocSeccion, Contenido } from '../../core/services/data.service';
 
 export const ESTATUTOS_DEFAULT: DocSeccion[] = [
   { titulo: 'Artículo 1 – Nombre y Domicilio', contenido: 'La agrupación se denominará "Reales Brillantes Valparaíso" y tendrá su domicilio en la ciudad de Valparaíso, Región de Valparaíso, República de Chile.' },
@@ -22,12 +23,19 @@ export const ESTATUTOS_DEFAULT: DocSeccion[] = [
 })
 export class EstatutosComponent implements OnInit {
   secciones = signal<DocSeccion[]>(ESTATUTOS_DEFAULT);
+  pdfUrl = signal('');
+  pdfSafe = signal<SafeResourceUrl | null>(null);
 
-  constructor(private data: DataService) {}
+  constructor(private data: DataService, private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
     this.data.listenToList<DocSeccion>('estatutos', (val) => {
       this.secciones.set(val.length ? val : ESTATUTOS_DEFAULT);
+    });
+    this.data.listenToRef<Contenido>('contenido', (c) => {
+      const url = c?.estatutosPdf || '';
+      this.pdfUrl.set(url);
+      this.pdfSafe.set(url ? this.sanitizer.bypassSecurityTrustResourceUrl(url) : null);
     });
   }
 }

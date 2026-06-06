@@ -8,6 +8,15 @@
 
 <section class="section">
   <div class="container">
+    @if (pdfUrl()) {
+      <div class="doc-pdf">
+        <div class="doc-pdf-head">
+          <span><i class="fas fa-file-pdf"></i> Documento oficial (PDF)</span>
+          <a [href]="pdfUrl()" target="_blank" rel="noopener" class="btn-primary"><i class="fas fa-external-link-alt"></i> Abrir en pestaña nueva</a>
+        </div>
+        <iframe [src]="pdfSafe()" title="Documento PDF"></iframe>
+      </div>
+    }
     <div class="regl-grid">
       @for (reg of reglamentos(); track reg.titulo) {
         <div class="regl-card card">
