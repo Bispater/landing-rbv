@@ -1,13 +1,6 @@
 {
   "rules": {
     ".read": true,
-    ".write": "auth != null",
-    "eventos":   { ".read": true, ".write": "auth != null" },
-    "fotos":     { ".read": true, ".write": "auth != null" },
-    "playlist":  { ".read": true, ".write": "auth != null" },
-    "tutoriales":{ ".read": true, ".write": "auth != null" },
-    "comisiones":{ ".read": true, ".write": "auth != null" },
-    "popups":    { ".read": true, ".write": "auth != null" },
-    "contenido": { ".read": true, ".write": "auth != null" }
+    ".write": "auth != null"
   }
 }
