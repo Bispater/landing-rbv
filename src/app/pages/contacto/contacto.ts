@@ -4,13 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { DataService, Contenido, DEFAULT_CONTENIDO, conContenidoDefaults } from '../../core/services/data.service';
 import { SnackbarService } from '../../core/services/snackbar.service';
 
-interface FormularioContacto {
-  nombre: string;
-  email: string;
-  tipo: string;
-  mensaje: string;
-}
-
 @Component({
   selector: 'app-contacto',
   standalone: true,
@@ -21,9 +14,13 @@ interface FormularioContacto {
 export class ContactoComponent implements OnInit {
   contenido: Contenido = structuredClone(DEFAULT_CONTENIDO);
   enviando = signal(false);
+  suscribiendo = signal(false);
 
   readonly tipos = ['Consulta general', 'Invitación a un evento', 'Quiero sumarme', 'Otro'];
-  form: FormularioContacto = { nombre: '', email: '', tipo: this.tipos[0], mensaje: '' };
+  form = { nombre: '', email: '', tipo: this.tipos[0], mensaje: '' };
+
+  readonly intereses = ['Convocatoria (cuándo abren las postulaciones)', 'Eventos y presentaciones', 'Todo'];
+  suscripcion = { email: '', interes: this.intereses[2] };
 
   constructor(private data: DataService, private snackbar: SnackbarService) {}
 
@@ -33,44 +30,41 @@ export class ContactoComponent implements OnInit {
     });
   }
 
+  private emailValido(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
   async enviar(): Promise<void> {
-    if (!this.form.nombre || !this.form.email || !this.form.mensaje) {
-      this.snackbar.show('Completa tu nombre, correo y mensaje', 'error');
+    if (!this.form.nombre || !this.emailValido(this.form.email) || !this.form.mensaje) {
+      this.snackbar.show('Completa tu nombre, un correo válido y el mensaje', 'error');
       return;
     }
     this.enviando.set(true);
     try {
-      const { WEB3FORMS_ACCESS_KEY } = await import('../../contacto.config');
-      const asunto = `[Web RBV] ${this.form.tipo} — ${this.form.nombre}`;
-
-      if (WEB3FORMS_ACCESS_KEY) {
-        // Envío real vía Web3Forms (sin backend).
-        const res = await fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({
-            access_key: WEB3FORMS_ACCESS_KEY,
-            subject: asunto,
-            from_name: this.form.nombre,
-            email: this.form.email,
-            tipo: this.form.tipo,
-            message: this.form.mensaje,
-          }),
-        });
-        if (!res.ok) throw new Error('fallo envío');
-        this.snackbar.show('¡Mensaje enviado! Te responderemos pronto.');
-        this.form = { nombre: '', email: '', tipo: this.tipos[0], mensaje: '' };
-      } else {
-        // Alternativa sin configuración: abrir el cliente de correo del visitante.
-        const cuerpo = `Nombre: ${this.form.nombre}\nCorreo: ${this.form.email}\nTipo: ${this.form.tipo}\n\n${this.form.mensaje}`;
-        const url = `mailto:${this.contenido.contacto.email}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
-        window.location.href = url;
-        this.snackbar.show('Abrimos tu correo para enviar el mensaje');
-      }
+      await this.data.addItem('mensajes', { ...this.form, fecha: new Date().toISOString() });
+      this.snackbar.show('¡Mensaje enviado! Te responderemos pronto.');
+      this.form = { nombre: '', email: '', tipo: this.tipos[0], mensaje: '' };
     } catch {
       this.snackbar.show('No pudimos enviar el mensaje. Intenta nuevamente.', 'error');
     } finally {
       this.enviando.set(false);
+    }
+  }
+
+  async suscribir(): Promise<void> {
+    if (!this.emailValido(this.suscripcion.email)) {
+      this.snackbar.show('Ingresa un correo válido', 'error');
+      return;
+    }
+    this.suscribiendo.set(true);
+    try {
+      await this.data.addItem('suscriptores', { ...this.suscripcion, fecha: new Date().toISOString() });
+      this.snackbar.show('¡Listo! Te avisaremos por correo.');
+      this.suscripcion = { email: '', interes: this.intereses[2] };
+    } catch {
+      this.snackbar.show('No pudimos registrar tu correo. Intenta nuevamente.', 'error');
+    } finally {
+      this.suscribiendo.set(false);
     }
   }
 }

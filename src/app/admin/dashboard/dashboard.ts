@@ -11,6 +11,8 @@ import {
   Cancion,
   Foto,
   Popup,
+  Mensaje,
+  Suscriptor,
   Contenido,
   DEFAULT_CONTENIDO,
   conContenidoDefaults,
@@ -22,7 +24,7 @@ import { ConfirmService } from '../../core/services/confirm.service';
 import { FechaInputComponent } from '../../shared/fecha-input/fecha-input';
 import { FechaLargaPipe } from '../../core/util/fecha.pipe';
 
-type Section = 'eventos' | 'tutoriales' | 'playlist' | 'fotos' | 'popups' | 'contenido';
+type Section = 'eventos' | 'tutoriales' | 'playlist' | 'fotos' | 'popups' | 'mensajes' | 'contenido';
 
 @Component({
   selector: 'app-dashboard',
@@ -38,6 +40,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   playlist = signal<Cancion[]>([]);
   fotos = signal<Foto[]>([]);
   popups = signal<Popup[]>([]);
+  mensajes = signal<Mensaje[]>([]);
+  suscriptores = signal<Suscriptor[]>([]);
 
   nuevoEvento: Partial<Evento> = this.emptyEvento();
   nuevoTutorial: Partial<Tutorial> = this.emptyTutorial();
@@ -90,6 +94,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.data.listenToList<Cancion>('playlist', (v) => this.playlist.set(v));
     this.data.listenToList<Foto>('fotos', (v) => this.fotos.set(v));
     this.data.listenToList<Popup>('popups', (v) => this.popups.set(v));
+    this.data.listenToList<Mensaje>('mensajes', (v) =>
+      this.mensajes.set(v.sort((a, b) => (a.fecha < b.fecha ? 1 : -1))));
+    this.data.listenToList<Suscriptor>('suscriptores', (v) =>
+      this.suscriptores.set(v.sort((a, b) => (a.fecha < b.fecha ? 1 : -1))));
     this.data.listenToRef<Contenido>('contenido', (val) => {
       this.contenido.set(conContenidoDefaults(val));
     });
@@ -378,6 +386,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
     await this.data.updateItem(`popups/${id}`, data);
     this.editandoPopup.set(null);
     this.mostrarMensaje('Popup actualizado');
+  }
+
+  async eliminarMensaje(id: string): Promise<void> {
+    if (await this.confirmarEliminacion('¿Eliminar este mensaje?')) {
+      try {
+        await this.data.deleteItem(`mensajes/${id}`);
+        this.mostrarMensaje('Mensaje eliminado');
+      } catch (e) { this.avisarError(e); }
+    }
+  }
+
+  async eliminarSuscriptor(id: string): Promise<void> {
+    if (await this.confirmarEliminacion('¿Eliminar este suscriptor?')) {
+      try {
+        await this.data.deleteItem(`suscriptores/${id}`);
+        this.mostrarMensaje('Suscriptor eliminado');
+      } catch (e) { this.avisarError(e); }
+    }
+  }
+
+  /** Une todos los correos de suscriptores separados por coma (para copiar y pegar en el correo). */
+  correosSuscriptores(): string {
+    return this.suscriptores().map((s) => s.email).join(', ');
   }
 
   async togglePopupActivo(p: Popup): Promise<void> {

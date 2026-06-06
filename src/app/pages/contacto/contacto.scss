@@ -75,6 +75,43 @@
   p { font-size: 0.92rem; line-height: 1.6; color: rgba(255, 255, 255, 0.9); }
 }
 
+.suscribir-card {
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  background: var(--color-dark);
+  color: #fff;
+
+  h3 {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    color: var(--color-gold);
+    margin-bottom: 0.5rem;
+    i { margin-right: 0.4rem; }
+  }
+  > p { color: rgba(255, 255, 255, 0.75); font-size: 0.88rem; line-height: 1.5; margin-bottom: 1rem; }
+
+  .form-group { margin-bottom: 0.75rem; }
+  input, select {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.9rem;
+    &::placeholder { color: rgba(255, 255, 255, 0.45); }
+    &:focus { outline: none; border-color: var(--color-gold); }
+    option { color: var(--color-text); }
+  }
+
+  .btn-gold {
+    width: 100%;
+    justify-content: center;
+    margin-top: 0.25rem;
+  }
+}
+
 .info-card {
   padding: 1.5rem;
   border-radius: var(--radius-md);

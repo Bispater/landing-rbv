@@ -40,6 +40,24 @@ export interface Popup {
   activo: boolean;
 }
 
+/** Mensaje enviado desde el formulario de contacto. */
+export interface Mensaje {
+  id?: string;
+  nombre: string;
+  email: string;
+  tipo: string;
+  mensaje: string;
+  fecha: string; // ISO datetime
+}
+
+/** Suscriptor que quiere recibir avisos (convocatoria / eventos). */
+export interface Suscriptor {
+  id?: string;
+  email: string;
+  interes: string;
+  fecha: string; // ISO datetime
+}
+
 /**
  * Devuelve las ocurrencias (fecha + hora) de un evento, ordenadas por fecha.
  * Tolera datos antiguos donde `fechas` era un arreglo de strings o donde solo existía `fecha`.

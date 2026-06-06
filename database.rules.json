@@ -1,6 +1,26 @@
 {
   "rules": {
-    ".read": true,
-    ".write": "auth != null"
+    "eventos":    { ".read": true, ".write": "auth != null" },
+    "fotos":      { ".read": true, ".write": "auth != null" },
+    "playlist":   { ".read": true, ".write": "auth != null" },
+    "tutoriales": { ".read": true, ".write": "auth != null" },
+    "comisiones": { ".read": true, ".write": "auth != null" },
+    "popups":     { ".read": true, ".write": "auth != null" },
+    "contenido":  { ".read": true, ".write": "auth != null" },
+
+    "mensajes": {
+      ".read": "auth != null",
+      "$id": {
+        ".write": "auth != null || (!data.exists() && newData.exists())",
+        ".validate": "newData.hasChildren(['email','mensaje']) && newData.child('email').val().length < 200 && newData.child('mensaje').val().length < 4000"
+      }
+    },
+    "suscriptores": {
+      ".read": "auth != null",
+      "$id": {
+        ".write": "auth != null || (!data.exists() && newData.exists())",
+        ".validate": "newData.hasChildren(['email']) && newData.child('email').val().length < 200"
+      }
+    }
   }
 }

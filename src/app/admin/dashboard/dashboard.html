@@ -29,6 +29,10 @@
               (click)="setSeccion('popups')">
         <i class="fas fa-bell"></i> Popups
       </button>
+      <button class="dash-nav-btn" [class.active]="seccionActiva() === 'mensajes'"
+              (click)="setSeccion('mensajes')">
+        <i class="fas fa-inbox"></i> Mensajes
+      </button>
       <button class="dash-nav-btn" [class.active]="seccionActiva() === 'contenido'"
               (click)="setSeccion('contenido')">
         <i class="fas fa-sliders-h"></i> Contenido
@@ -685,6 +689,58 @@
           }
           @if (popups().length === 0) {
             <p class="dash-empty">No hay popups. Crea uno arriba.</p>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- MENSAJES Y SUSCRIPTORES -->
+    @if (seccionActiva() === 'mensajes') {
+      <div class="dash-section">
+        <h2 class="dash-title"><i class="fas fa-inbox"></i> Mensajes de contacto</h2>
+        <div class="dash-list" style="margin-top: 1rem">
+          @for (m of mensajes(); track m.id) {
+            <div class="dash-item msg-item">
+              <div class="dash-item-info">
+                <span class="dash-item-badge">{{ m.tipo }}</span>
+                <strong>{{ m.nombre }}</strong>
+                <a [href]="'mailto:' + m.email" class="msg-email"><i class="fas fa-envelope"></i> {{ m.email }}</a>
+                <span class="msg-fecha">{{ m.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+                <p class="msg-texto">{{ m.mensaje }}</p>
+              </div>
+              <div class="item-btns">
+                <button class="btn-del" (click)="eliminarMensaje(m.id!)" title="Eliminar"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+          }
+          @if (mensajes().length === 0) {
+            <p class="dash-empty">Aún no hay mensajes.</p>
+          }
+        </div>
+
+        <div class="dash-title-row" style="margin-top: 2.5rem">
+          <h2 class="dash-title"><i class="fas fa-bell"></i> Suscriptores ({{ suscriptores().length }})</h2>
+          @if (suscriptores().length > 0) {
+            <a class="btn-toggle-form" [href]="'mailto:?bcc=' + correosSuscriptores()" title="Abrir correo a todos (CCO)">
+              <i class="fas fa-paper-plane"></i> Escribir a todos
+            </a>
+          }
+        </div>
+        <div class="dash-list">
+          @for (s of suscriptores(); track s.id) {
+            <div class="dash-item">
+              <div class="dash-item-info">
+                <a [href]="'mailto:' + s.email" class="msg-email"><i class="fas fa-envelope"></i> {{ s.email }}</a>
+                <span class="dash-item-badge music">{{ s.interes }}</span>
+                <span class="msg-fecha">{{ s.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+              <div class="item-btns">
+                <button class="btn-del" (click)="eliminarSuscriptor(s.id!)" title="Eliminar"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+          }
+          @if (suscriptores().length === 0) {
+            <p class="dash-empty">Aún no hay suscriptores.</p>
           }
         </div>
       </div>
